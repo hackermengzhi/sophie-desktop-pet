@@ -1,0 +1,10 @@
+bin/
+obj/
+.DS_Store
+*.user
+*.suo
+*.pdb
+*.zip
+*.dmg
+.idea/
+.vscode/

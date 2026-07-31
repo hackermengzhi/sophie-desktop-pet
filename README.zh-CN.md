@@ -1,0 +1,93 @@
+# Sophie 桌面宠物
+
+[![Build](https://github.com/hackermengzhi/sophie-desktop-pet/actions/workflows/build.yml/badge.svg)](https://github.com/hackermengzhi/sophie-desktop-pet/actions/workflows/build.yml)
+[![macOS](https://img.shields.io/badge/macOS-12%2B-black?logo=apple)](https://github.com/hackermengzhi/sophie-desktop-pet/releases)
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+
+> 一个具有透明背景、天气、完整生活动作和可展开像素浮岛的 macOS
+> 桌面宠物。
+
+[English](README.md)
+
+![Sophie 在迷你草坪上休息](docs/screenshots/desktop-pet.png)
+
+## 功能
+
+- macOS 原生透明、无边框、始终置顶的小桌宠窗口。
+- 8 种独立生成的四帧生活动画：待机、左右行走、坐下、吃东西、睡觉、
+  浇花和看书。
+- 每帧固定显示 500ms；每次待机 20 秒后保证播放一个非待机随机动作。
+- 通过 [ipwho.is](https://ipwho.is/) 自动估算大致位置，并从
+  [Open-Meteo](https://open-meteo.com/) 获取当前天气。
+- 天气每 15 分钟刷新一次；失败后会在 2 分钟后重试。
+- 不显示具体温度数字；右侧对称的像素温度计用四档颜色与高度表示温度，
+  同时温度会影响 Sophie 的待机动作。
+- 手动选择天气会暂停自动更新，直到选择“恢复自动定位天气”。
+- 普通模式只在脚下的小草坪活动，不会横穿整个桌面。
+- 双击 Sophie 可以展开或收起她的小世界。
+- 小世界支持昼夜、云随风移动、萤火虫、像素雨和像素雪。
+- 启动时及每小时检查 GitHub 最新正式版；发现新版后自动下载并校验
+  SHA-256，只有点击右键菜单中的安装项才会替换应用并重启。
+- 提供 Apple Silicon 自包含构建，不需要另装 .NET。
+
+## 小世界
+
+![Sophie 的像素浮岛](docs/screenshots/little-world.png)
+
+在小世界中，Sophie 会先走到适合的位置，再坐下、吃东西、睡觉、浇花或
+看书。人物脚底沿岛内地面透视线移动，并仅使用轻微纵深缩放。
+
+## 操作
+
+| 操作 | 功能 |
+| --- | --- |
+| 左键拖动 | 移动 Sophie 或小世界窗口 |
+| 双击 Sophie | 展开或收起小世界 |
+| 右键 | 设置自动生活、昼夜、天气、安装更新或退出 |
+
+生活动作全部自动发生，不提供手动点播菜单。
+
+## 自动更新
+
+更新器只接受名称为 `Sophie-Desktop-Pet-macOS-arm64.zip` 的唯一正式版
+附件，并在安装前验证附件大小、GitHub 提供的 SHA-256 摘要、App 结构和
+代码签名。安装失败时会恢复旧版本。
+
+更新器匿名读取这个公开仓库，不会请求、保存、嵌入或记录 GitHub 凭据。
+
+## 编译
+
+需要 macOS 12+ 和 .NET 10 SDK：
+
+```bash
+dotnet restore SophieDesktopPet/SophieDesktopPet.csproj
+dotnet build SophieDesktopPet/SophieDesktopPet.csproj -c Release
+```
+
+发布 Apple Silicon 自包含版本：
+
+```bash
+dotnet publish SophieDesktopPet/SophieDesktopPet.csproj \
+  -c Release \
+  -r osx-arm64 \
+  --self-contained true \
+  -p:PublishSingleFile=true
+```
+
+创建正式版时，先同步 `SophieDesktopPet.csproj` 中的 `Version`，再推送
+同版本标签，例如 `v1.3.0`。`release.yml` 会自动构建、签名、验证、
+保存 Actions artifact，并创建带 ZIP 和 SHA-256 文件的 GitHub Release。
+
+## 隐私
+
+应用不包含统计分析、广告、账号或后台数据收集。网络请求仅用于通过
+[ipwho.is](https://ipwho.is/) 获取大致位置、通过
+[Open-Meteo](https://open-meteo.com/) 获取当前天气，以及从 GitHub
+检查和下载正式版更新。
+
+## 许可证
+
+C# 源代码采用 [MIT License](LICENSE)。
+
+Sophie 的人物形象及生成美术素材不属于 MIT 授权范围。转载、重新发布或
+复用素材前请阅读 [NOTICE.md](NOTICE.md)。

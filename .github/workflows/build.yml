@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos-arm64:
+    runs-on: macos-15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore SophieDesktopPet/SophieDesktopPet.csproj
+
+      - name: Build
+        run: dotnet build SophieDesktopPet/SophieDesktopPet.csproj -c Release --no-restore
+
+      - name: Publish Apple Silicon build
+        run: >-
+          dotnet publish SophieDesktopPet/SophieDesktopPet.csproj
+          -c Release
+          -r osx-arm64
+          --self-contained true
+          -p:PublishSingleFile=true
+
+      - name: Upload publish directory
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: SophieDesktopPet-macOS-arm64
+          path: SophieDesktopPet/bin/Release/net10.0/osx-arm64/publish/
+          if-no-files-found: error
