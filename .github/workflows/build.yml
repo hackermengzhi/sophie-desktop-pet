@@ -23,22 +23,33 @@ jobs:
           global-json-file: global.json
 
       - name: Restore
-        run: dotnet restore SophieDesktopPet/SophieDesktopPet.csproj
+        run: >-
+          dotnet restore SophieDesktopPet/SophieDesktopPet.csproj
+          --runtime osx-arm64
+          --locked-mode
 
       - name: Build
         run: dotnet build SophieDesktopPet/SophieDesktopPet.csproj -c Release --no-restore
 
-      - name: Publish Apple Silicon build
-        run: >-
-          dotnet publish SophieDesktopPet/SophieDesktopPet.csproj
-          -c Release
-          -r osx-arm64
-          --self-contained true
-          -p:PublishSingleFile=true
+      - name: Package macOS app
+        run: |
+          set -euo pipefail
+          version="$(
+            dotnet msbuild SophieDesktopPet/SophieDesktopPet.csproj \
+              -nologo -v:q -getProperty:Version |
+              tr -d '\r' | tail -n 1
+          )"
+          chmod +x scripts/package-macos-arm64.sh
+          scripts/package-macos-arm64.sh \
+            SophieDesktopPet/SophieDesktopPet.csproj \
+            "$version" \
+            dist
 
-      - name: Upload publish directory
+      - name: Upload packaged app
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: SophieDesktopPet-macOS-arm64
-          path: SophieDesktopPet/bin/Release/net10.0/osx-arm64/publish/
+          name: Sophie-Desktop-Pet-package-macOS-arm64
+          path: |
+            dist/Sophie-Desktop-Pet-macOS-arm64.zip
+            dist/Sophie-Desktop-Pet-macOS-arm64.zip.sha256
           if-no-files-found: error
