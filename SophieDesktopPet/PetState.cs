@@ -25,7 +25,7 @@ internal static class LifeAnimations
         PetState.Idle => new(0, 4, true),
         PetState.RunningRight => new(1, 4, true),
         PetState.RunningLeft => new(2, 4, true),
-        PetState.Sitting => new(3, 4, true),
+        PetState.Sitting => new(3, 4, false),
         PetState.Eating => new(4, 4, true),
         PetState.Sleeping => new(5, 4, true),
         PetState.Gardening => new(6, 4, true),
