@@ -15,15 +15,19 @@
 ## Highlights
 
 - Transparent, frameless, always-on-top macOS desktop pet.
-- Eight independently generated four-frame life animations: idle, walking
-  right, walking left, sitting, eating, sleeping, gardening, and reading.
+- Twelve independently generated four-frame life animations: idle, walking
+  right, walking left, sitting, eating, sleeping, gardening, reading, rain
+  umbrella, snowman building, shivering, and cooling down.
 - Every frame is held for 500 ms. A guaranteed activity cycle follows 20
   seconds of idle time with one random non-idle action.
 - Approximate automatic location via [ipwho.is](https://ipwho.is/) and current
   conditions from [Open-Meteo](https://open-meteo.com/).
 - Weather refreshes every 15 minutes and retries after 2 minutes on failure.
-- Temperature changes Sophie's idle behavior without displaying a number:
-  the symmetric right-side pixel thermometer uses four visual levels.
+- Sophie keeps a front-facing idle pose. In clear automatic weather, cold
+  conditions can make her shiver and heat can make her wipe her brow; rain and
+  snow take precedence with umbrella and snowman activities. No temperature
+  number is displayed: the symmetric right-side pixel thermometer uses four
+  visual levels.
 - Manual weather disables automatic updates until **Restore Automatic
   Weather** is selected.
 - Compact mode keeps Sophie on a tiny generated turf patch instead of roaming
@@ -39,8 +43,10 @@
 ![Sophie's expandable island](docs/screenshots/little-world.png)
 
 Sophie walks to an activity spot before sitting, eating, sleeping, gardening,
-or reading. Her feet follow the island's ground plane with restrained depth
-scaling so she remains visually grounded in the scene.
+reading, or weather-appropriate activities. Her feet follow the island's
+ground plane with restrained depth scaling so she remains visually grounded in
+the scene. Sitting and snowman building play once, then hold their completed
+pose instead of cycling backwards.
 
 ## Controls
 

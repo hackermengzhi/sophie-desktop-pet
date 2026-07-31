@@ -287,15 +287,7 @@ internal sealed class PetWindow : Window
 
     private PetState SelectIdleVisual()
     {
-        var temperature = _lastGoodWeather?.TemperatureC;
-        return temperature switch
-        {
-            <= 5 => PetState.Sleeping,
-            <= 14 => PetState.Sitting,
-            <= 27 => PetState.Idle,
-            > 27 => PetState.Eating,
-            _ => PetState.Idle
-        };
+        return PetState.Idle;
     }
 
     private void BeginActivity(PetState state, int ticks)
@@ -323,6 +315,11 @@ internal sealed class PetWindow : Window
 
     private void ChooseNextIslandActivity()
     {
+        if (TryChooseWeatherActivity(island: true))
+        {
+            return;
+        }
+
         var roll = _random.Next(100);
         if (_world.IsNight)
         {
@@ -443,6 +440,11 @@ internal sealed class PetWindow : Window
 
     private void ChooseNextDesktopActivity()
     {
+        if (TryChooseWeatherActivity(island: false))
+        {
+            return;
+        }
+
         var roll = _random.Next(100);
         if (_world.IsNight)
         {
@@ -527,6 +529,66 @@ internal sealed class PetWindow : Window
         }
     }
 
+    private bool TryChooseWeatherActivity(bool island)
+    {
+        var weather = _world.Weather;
+        if (weather == WeatherMode.Snow)
+        {
+            if (_random.Next(100) < 28)
+            {
+                BeginWeatherActivity(
+                    PetState.Snowman, _random.Next(55, 86), island, 230);
+                return true;
+            }
+
+            return false;
+        }
+
+        if (weather == WeatherMode.Rain)
+        {
+            if (_random.Next(100) < 35)
+            {
+                BeginWeatherActivity(
+                    PetState.RainUmbrella, _random.Next(50, 91), island, 195);
+                return true;
+            }
+
+            return false;
+        }
+
+        var temperature = _world.TemperatureC;
+        if (temperature is <= 5 && _random.Next(100) < 35)
+        {
+            BeginWeatherActivity(
+                PetState.Shiver, _random.Next(35, 66), island, 195);
+            return true;
+        }
+
+        if (temperature is > 27 && _random.Next(100) < 35)
+        {
+            BeginWeatherActivity(
+                PetState.Sweat, _random.Next(35, 66), island, 195);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void BeginWeatherActivity(
+        PetState activity,
+        int ticks,
+        bool island,
+        double islandTargetX)
+    {
+        if (island)
+        {
+            BeginIslandActivity(activity, ticks, islandTargetX);
+            return;
+        }
+
+        BeginActivity(activity, ticks);
+    }
+
     private async Task RefreshWeatherAsync()
     {
         if (!_automaticWeather || _weatherRefreshRunning)
@@ -596,7 +658,7 @@ internal sealed class PetWindow : Window
         }
     }
 
-    private void DisableAutomaticWeather(string status)
+    private void DisableAutomaticWeather(string status, bool refreshIdle = true)
     {
         _automaticWeather = false;
         _weatherTimer.Stop();
@@ -605,13 +667,17 @@ internal sealed class PetWindow : Window
         {
             _weatherStatusMenu.Header = status;
         }
-        RefreshIdleVisual();
+        if (refreshIdle)
+        {
+            RefreshIdleVisual();
+        }
     }
 
     private void SetManualWeather(WeatherMode mode, string label)
     {
-        DisableAutomaticWeather($"天气：手动{label}");
+        DisableAutomaticWeather($"天气：手动{label}", refreshIdle: false);
         _world.SetWeather(mode);
+        RefreshIdleVisual();
     }
 
     private async Task RestoreAutomaticWeatherAsync()

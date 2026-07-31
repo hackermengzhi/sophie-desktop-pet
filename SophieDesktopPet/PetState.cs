@@ -15,7 +15,11 @@ internal enum PetState
     Eating,
     Sleeping,
     Gardening,
-    Reading
+    Reading,
+    RainUmbrella,
+    Snowman,
+    Shiver,
+    Sweat
 }
 
 internal static class LifeAnimations
@@ -30,6 +34,10 @@ internal static class LifeAnimations
         PetState.Sleeping => new(5, 4, true),
         PetState.Gardening => new(6, 4, true),
         PetState.Reading => new(7, 4, true),
+        PetState.RainUmbrella => new(8, 4, true),
+        PetState.Snowman => new(9, 4, false),
+        PetState.Shiver => new(10, 4, true),
+        PetState.Sweat => new(11, 4, true),
         PetState.Working => new(7, 4, true),
         PetState.Reviewing => new(7, 4, true),
         _ => new(0, 4, true)

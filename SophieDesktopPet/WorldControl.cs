@@ -414,8 +414,10 @@ internal sealed class WorldControl : Avalonia.Controls.Control
 
     private void DrawPet(DrawingContext context)
     {
-        var row = Math.Clamp(_row, 0, 7);
-        var column = _column % 4;
+        var rows = Math.Max(1, _lifeAtlas.PixelSize.Height / CellHeight);
+        var columns = Math.Max(1, _lifeAtlas.PixelSize.Width / CellWidth);
+        var row = Math.Clamp(_row, 0, rows - 1);
+        var column = ((_column % columns) + columns) % columns;
         var source = new Rect(
             column * CellWidth,
             row * CellHeight,

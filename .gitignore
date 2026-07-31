@@ -8,3 +8,8 @@ obj/
 *.dmg
 .idea/
 .vscode/
+art/weather-actions/*.response.json
+art/weather-actions/decoded/
+art/weather-actions/frames/
+art/weather-actions/qa-contact-sheet.png
+art/weather-actions/sophie-life-with-weather.png
