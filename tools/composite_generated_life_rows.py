@@ -41,6 +41,12 @@ BUSH_BOXES = [
     (122, 160, 684, 730),
     (947, 161, 1621, 732),
 ]
+WINTER_COAT_BOXES = [
+    (165, 107, 393, 725),
+    (637, 107, 864, 725),
+    (1109, 107, 1337, 725),
+    (1581, 107, 1808, 725),
+]
 
 
 def chroma_key(image: Image.Image) -> Image.Image:
@@ -119,6 +125,35 @@ def build_mechanic_row(root: Path) -> Image.Image:
         sophie_position = (3, CELL_HEIGHT - sophie.height - 7)
         composite_checked(cell, prop, prop_position, "mechanic props")
         composite_checked(cell, sophie, sophie_position, "mechanic Sophie")
+        row.alpha_composite(cell, (frame * CELL_WIDTH, 0))
+    return row
+
+
+def build_winter_coat_row(root: Path) -> Image.Image:
+    sheet = Image.open(root / "art/weather-actions/winter-coat.png")
+    sprites = [extract(sheet, box) for box in WINTER_COAT_BOXES]
+    if len(sprites) != FRAME_COUNT:
+        raise ValueError("Winter-coat source frame count is not four")
+    row = Image.new("RGBA", (CELL_WIDTH * FRAME_COUNT, CELL_HEIGHT))
+    for frame, sprite in enumerate(sprites):
+        cell = Image.new("RGBA", (CELL_WIDTH, CELL_HEIGHT))
+        alpha = sprite.getchannel("A")
+        alpha.paste(
+            0,
+            (
+                0,
+                0,
+                sprite.width,
+                15,
+            ),
+        )
+        sprite.putalpha(alpha)
+        sprite = resize(sprite, 0.31)
+        position = (
+            round((CELL_WIDTH - sprite.width) / 2),
+            CELL_HEIGHT - sprite.height - 6,
+        )
+        composite_checked(cell, sprite, position, "winter-coat Sophie")
         row.alpha_composite(cell, (frame * CELL_WIDTH, 0))
     return row
 
@@ -241,12 +276,25 @@ def main() -> None:
     root = Path(__file__).resolve().parents[1]
     atlas_path = root / "SophieDesktopPet/Assets/sophie-life.png"
     base_path = root / "art/base/sophie-life-base-16rows.png"
-    preserved = Image.open(base_path).convert("RGBA")
+    base = Image.open(base_path).convert("RGBA")
     expected_base_size = (CELL_WIDTH * FRAME_COUNT, 16 * CELL_HEIGHT)
-    if preserved.size != expected_base_size:
+    if base.size != expected_base_size:
         raise ValueError(
-            f"Base atlas has size {preserved.size}, expected {expected_base_size}"
+            f"Base atlas has size {base.size}, expected {expected_base_size}"
         )
+    preserved = base.copy()
+    winter_coat_row = build_winter_coat_row(root)
+    preserved.paste(winter_coat_row, (0, 10 * CELL_HEIGHT))
+    if ImageChops.difference(
+            base.crop((0, 0, base.width, 10 * CELL_HEIGHT)),
+            preserved.crop((0, 0, base.width, 10 * CELL_HEIGHT)),
+    ).getbbox() is not None:
+        raise ValueError("Rows 0-9 changed while replacing winter coat")
+    if ImageChops.difference(
+            base.crop((0, 11 * CELL_HEIGHT, base.width, base.height)),
+            preserved.crop((0, 11 * CELL_HEIGHT, base.width, base.height)),
+    ).getbbox() is not None:
+        raise ValueError("Rows 11-15 changed while replacing winter coat")
     mechanic_row = build_mechanic_row(root)
     toilet_row = build_toilet_row(root)
     urgent_row = build_urgent_bush_row(root)
@@ -262,9 +310,11 @@ def main() -> None:
     update_path = root / "art/update-action/update-research.png"
     toilet_path = root / "art/bathroom-actions/toilet-break.png"
     urgent_path = root / "art/bathroom-actions/urgent-bush.png"
+    winter_coat_path = root / "art/weather-actions/winter-coat-row.png"
     save_png_atomic(mechanic_row, update_path)
     save_png_atomic(toilet_row, toilet_path)
     save_png_atomic(urgent_row, urgent_path)
+    save_png_atomic(winter_coat_row, winter_coat_path)
     save_preview(mechanic_row, update_path.with_name(
         "update-research-preview.png"
     ))
@@ -273,6 +323,9 @@ def main() -> None:
     ))
     save_preview(urgent_row, urgent_path.with_name(
         "urgent-bush-preview.png"
+    ))
+    save_preview(winter_coat_row, winter_coat_path.with_name(
+        "winter-coat-preview.png"
     ))
     atlas_temporary = atlas_path.with_name(atlas_path.name + ".tmp")
     atlas_temporary.unlink(missing_ok=True)

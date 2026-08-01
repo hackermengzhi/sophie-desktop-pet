@@ -5,7 +5,8 @@ by the application:
 
 - `rain-umbrella.png` — looping umbrella idle for rain.
 - `snowman.png` — one-way snowman-building sequence; the final pose is held.
-- `shiver.png` — looping cold-weather shiver.
+- `winter-coat.png` — generated source strip for a cozy padded-coat idle.
+- `winter-coat-row.png` — keyed and scaled four-frame production row.
 - `sweat.png` — looping hot-weather brow wipe.
 
 `tools/build_weather_life_atlas.py` deterministically normalizes their

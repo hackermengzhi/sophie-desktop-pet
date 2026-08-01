@@ -1,0 +1,12 @@
+Use the supplied Sophie pixel-art reference as the exact identity, proportions, camera and rendering guide. Create exactly one horizontal four-frame full-body animation strip of the same adult Sophie, on a perfectly flat solid #FF00FF magenta chroma-key background. Preserve her recognizable black side ponytail, warm skin, large dark eyes, chibi proportions, sandals, restricted palette, dark pixel outline and crisp 8-bit/16-bit game-sprite style.
+
+In every frame Sophie is already wearing the SAME cute winter outfit: a short softly padded little cotton coat in warm cream with muted coral-red edging, a fluffy rounded collar, four small dark toggle buttons, slightly puffy long sleeves, and two front pockets. The coat reaches to mid-thigh and naturally covers her original black sleeveless top and most of the denim shorts, while her legs and sandals remain visible. It must read clearly as a warm quilted cotton coat, not a thin jacket, dress, cape, bathrobe or oversized costume. Keep the coat design, colors, seams, buttons and length identical across all four frames.
+
+Make a subtle seamless warm-idle loop rather than a shiver or dressing sequence:
+
+Frame 1: facing forward with both hands tucked comfortably into the coat pockets, gentle content smile.
+Frame 2: same pose with a tiny relaxed breathing rise and one natural blink.
+Frame 3: shoulders nestle slightly into the fluffy collar, cheeks faintly rosy, eyes happily closed.
+Frame 4: returns toward the first pose with eyes open and a small cozy smile.
+
+Exactly four evenly spaced non-overlapping sprites, identical scale, fixed feet baseline and fixed camera. No trembling, crossed bare arms, motion lines, snowflakes, scarf, hat, gloves, handbag, camera, ground, shadow, scenery, gradients, text, labels, borders, grid, extra limbs or extra characters. Generous solid-magenta gutters between frames.

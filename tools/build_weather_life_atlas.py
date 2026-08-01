@@ -14,7 +14,7 @@ COLUMNS = 4
 WEATHER_ROWS = (
     ("rain", 8),
     ("snowman", 9),
-    ("shiver", 10),
+    ("winter-coat", 10),
     ("sweat", 11),
 )
 

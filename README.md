@@ -17,7 +17,7 @@
 - Transparent, frameless, always-on-top macOS desktop pet.
 - Eighteen four-frame pixel animations: idle, walking
   right, walking left, sitting, eating, sleeping, gardening, reading, rain
-  umbrella, snowman building, shivering, cooling down, backpack outings, and
+  umbrella, snowman building, a cozy winter coat, cooling down, backpack outings, and
   joyful jumps, an affectionate expression, update-robot repair, a toilet-paper
   break, and a blushing urgent search for a private bush.
 - Every frame is held for 500 ms. A guaranteed activity cycle follows 20
@@ -26,7 +26,7 @@
   conditions from [Open-Meteo](https://open-meteo.com/).
 - Weather refreshes every 15 minutes and retries after 2 minutes on failure.
 - Sophie keeps a front-facing idle pose. In clear automatic weather, cold
-  conditions can make her shiver and heat can make her wipe her brow; rain and
+  conditions can put her in a little padded coat and heat can make her wipe her brow; rain and
   snow take precedence with umbrella and snowman activities. No temperature
   number is displayed: the symmetric right-side pixel thermometer uses four
   visual levels.

@@ -604,7 +604,7 @@ internal sealed class PetWindow : Window
         if (temperature is <= 5 && _random.Next(100) < 35)
         {
             BeginPositionedActivity(
-                PetState.Shiver, _random.Next(35, 66), island, 195);
+                PetState.WinterCoat, _random.Next(35, 66), island, 195);
             return true;
         }
 
