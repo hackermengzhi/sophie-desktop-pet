@@ -27,6 +27,8 @@
   seconds of idle time with one random non-idle action.
   The final toilet frame remains visible for about 15 seconds, and the private
   bush finale for about 13 seconds.
+  Sophie's sleep chance follows the time and weather: lowest on clear days and
+  higher at night without dominating her other activities.
 - Approximate automatic location via [ipwho.is](https://ipwho.is/) and current
   conditions from [Open-Meteo](https://open-meteo.com/).
 - Weather refreshes every 15 minutes and retries after 2 minutes on failure.

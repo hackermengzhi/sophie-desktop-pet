@@ -367,22 +367,22 @@ internal sealed class PetWindow : Window
         var roll = _random.Next(100);
         if (_world.IsNight)
         {
-            if (roll < 38)
+            if (roll < 24)
             {
                 BeginIslandActivity(
                     PetState.Sleeping, _random.Next(70, 100), 218);
             }
-            else if (roll < 66)
+            else if (roll < 58)
             {
                 BeginIslandActivity(
                     PetState.Reading, _random.Next(56, 82), 225);
             }
-            else if (roll < 82)
+            else if (roll < 78)
             {
                 BeginIslandActivity(
                     PetState.Eating, _random.Next(40, 58), 178);
             }
-            else if (roll < 94)
+            else if (roll < 92)
             {
                 BeginIslandActivity(
                     PetState.Sitting, _random.Next(38, 58), 260);
@@ -397,17 +397,17 @@ internal sealed class PetWindow : Window
 
         if (_world.Weather != WeatherMode.Clear)
         {
-            if (roll < 34)
+            if (roll < 38)
             {
                 BeginIslandActivity(
                     PetState.Reading, _random.Next(54, 78), 225);
             }
-            else if (roll < 62)
+            else if (roll < 54)
             {
                 BeginIslandActivity(
                     PetState.Sleeping, _random.Next(58, 82), 218);
             }
-            else if (roll < 82)
+            else if (roll < 76)
             {
                 BeginIslandActivity(
                     PetState.Eating, _random.Next(40, 58), 178);
@@ -435,11 +435,11 @@ internal sealed class PetWindow : Window
         {
             BeginIslandActivity(PetState.Eating, _random.Next(40, 58), 178);
         }
-        else if (roll < 69)
+        else if (roll < 63)
         {
             BeginIslandActivity(PetState.Sleeping, _random.Next(58, 86), 218);
         }
-        else if (roll < 82)
+        else if (roll < 78)
         {
             BeginIslandActivity(PetState.Gardening, _random.Next(42, 62), 300);
         }
@@ -507,15 +507,15 @@ internal sealed class PetWindow : Window
         var roll = _random.Next(100);
         if (_world.IsNight)
         {
-            if (roll < 36)
+            if (roll < 22)
             {
                 BeginActivity(PetState.Sleeping, _random.Next(58, 86));
             }
-            else if (roll < 58)
+            else if (roll < 52)
             {
                 BeginActivity(PetState.Reading, _random.Next(48, 70));
             }
-            else if (roll < 74)
+            else if (roll < 72)
             {
                 BeginActivity(PetState.Eating, _random.Next(36, 54));
             }
@@ -536,11 +536,11 @@ internal sealed class PetWindow : Window
             {
                 BeginActivity(PetState.Reading, _random.Next(44, 66));
             }
-            else if (roll < 52)
+            else if (roll < 42)
             {
                 BeginActivity(PetState.Sleeping, _random.Next(50, 74));
             }
-            else if (roll < 70)
+            else if (roll < 64)
             {
                 BeginActivity(PetState.Eating, _random.Next(36, 54));
             }
@@ -570,11 +570,11 @@ internal sealed class PetWindow : Window
         {
             BeginActivity(PetState.Eating, _random.Next(36, 54));
         }
-        else if (roll < 74)
+        else if (roll < 68)
         {
             BeginActivity(PetState.Sleeping, _random.Next(48, 70));
         }
-        else if (roll < 87)
+        else if (roll < 85)
         {
             BeginActivity(PetState.Gardening, _random.Next(38, 58));
         }
