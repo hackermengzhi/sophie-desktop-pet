@@ -1,0 +1,10 @@
+Combine the two supplied pixel-art prototype sheets into one coherent horizontal four-frame animation strip on a perfectly flat solid #FF00FF magenta chroma-key background. The first prototype defines Sophie exactly; the second defines the workbench and the same cute service robot exactly. Preserve Sophie's black side ponytail, face, black sleeveless top, denim shorts, sandals, proportions and pixel rendering. Preserve the workbench's four-leg perspective, wood and brass construction, and the robot's ivory armour, dark joints and cyan lights. Do not redesign either prototype.
+
+In every frame Sophie stands naturally at the LEFT FRONT corner of the SAME fixed workbench, with both feet on one baseline. The robot sits physically on the tabletop directly within her reach. Sophie, her tool and the robot must have visible pixel contact rather than a gap:
+
+Frame 1: Sophie leans in; the magnifying-glass lens is directly in front of and partially overlaps the robot's dark face display while her other hand steadies its left shoulder.
+Frame 2: the wrench jaws visibly grip a screw on the robot's open left side panel; Sophie's supporting hand touches the robot's forearm.
+Frame 3: Sophie's extended index fingertip visibly presses the robot's cyan chest test button; the button lights and the robot raises its tool arm.
+Frame 4: Sophie and the repaired robot perform a clear tiny high-five; her palm and the robot's raised palm touch edge-to-edge, with a small heart above them.
+
+Use correct 3/4 perspective and believable occlusion: table behind Sophie where appropriate, Sophie's contacting hand/tool in front of the robot contact area, robot feet on the tabletop, no floating objects. Exactly four evenly spaced non-overlapping scenes, identical camera, scale, table position and ground baseline. Crisp 8-bit/16-bit pixel art, restricted palette, hard pixel edges. No green book, reading pose, floating magnifier box, extra person, extra robot, extra limbs, duplicated tools, scenery, floor, gradients, blur, text, logo, border or grid.

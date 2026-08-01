@@ -7,10 +7,12 @@ shown.
 - `urgent-bush.png`: Sophie blushes, becomes visibly worried, finds a leafy
   bush, and crouches behind it while holding paper.
 
-Sophie, the toilet layers, and the bush layers are generated separately from
-the prompts stored beside them. `tools/build_special_life_rows.py` delegates to
-`tools/composite_generated_life_rows.py`, which uses fixed camera anchors and
-explicit occlusion order:
+`toilet-contact.png` is the approved combined toilet source. It was composed
+from the separately generated seated Sophie and toilet prototypes with the
+tank behind her, the seat under her hips, and her legs and paper fully in front
+of the bowl. `tools/build_special_life_rows.py` delegates to
+`tools/composite_generated_life_rows.py`.
 
-- toilet rear layer, seated Sophie, then only the near seat-rim arc;
+The urgent bush row still uses explicit occlusion order:
+
 - urgent Sophie, privacy bush, then the hand-and-paper foreground detail.

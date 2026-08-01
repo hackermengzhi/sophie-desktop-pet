@@ -644,6 +644,13 @@ internal sealed class PetWindow : Window
                 return true;
             }
 
+            if (daytimeRoll < 24)
+            {
+                BeginPositionedActivity(
+                    PetState.Singing, 20, island, 240);
+                return true;
+            }
+
             return false;
         }
 
@@ -659,6 +666,13 @@ internal sealed class PetWindow : Window
         {
             BeginPositionedActivity(
                 PetState.JoyJump, _random.Next(24, 37), island, 270);
+            return true;
+        }
+
+        if (quietRoll < 14)
+        {
+            BeginPositionedActivity(
+                PetState.Singing, 20, island, 240);
             return true;
         }
 

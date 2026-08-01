@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "state": "ActionName",
+  "slug": "action-name",
+  "source": "art/action-name-action/source.png",
+  "scale": 0.3,
+  "row": "append",
+  "boxes": [],
+  "loops": false,
+  "probability": {
+    "clearDay": 7,
+    "other": 5
+  },
+  "islandX": 240
+}

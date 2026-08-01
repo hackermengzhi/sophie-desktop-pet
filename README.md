@@ -15,11 +15,12 @@
 ## Highlights
 
 - Transparent, frameless, always-on-top macOS desktop pet.
-- Eighteen four-frame pixel animations: idle, walking
+- Nineteen four-frame pixel animations: idle, walking
   right, walking left, sitting, eating, sleeping, gardening, reading, rain
   umbrella, snowman building, a cozy winter coat, cooling down, backpack outings, and
   joyful jumps, an affectionate expression, update-robot repair, a toilet-paper
-  break, and a blushing urgent search for a private bush.
+  break, a blushing urgent search for a private bush, and singing into a tiny
+  golden microphone.
 - Every frame is held for 500 ms. A guaranteed activity cycle follows 20
   seconds of idle time with one random non-idle action.
 - Approximate automatic location via [ipwho.is](https://ipwho.is/) and current
@@ -106,6 +107,10 @@ User downloads are the direct assets on the repository Releases page.
 For a production release, update `Version` in the project and push the matching
 tag, such as `v1.5.0`. `release.yml` builds, signs, verifies, retains the Actions
 artifact, and creates the GitHub Release with the ZIP and SHA-256 file.
+
+For adding another approved life animation, use the compact
+[action import SOP](docs/ACTION_IMPORT_SOP.zh-CN.md) and its validated JSON
+contract instead of re-describing the atlas and timing rules.
 
 ## Project layout
 

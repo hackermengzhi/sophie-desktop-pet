@@ -11,26 +11,18 @@ CELL_HEIGHT = 208
 FRAME_COUNT = 4
 MAGENTA = (255, 0, 255)
 
-MECHANIC_PROP_BOXES = [
-    (33, 141, 473, 712),
-    (512, 141, 942, 712),
-    (984, 125, 1415, 712),
-    (1472, 82, 1919, 713),
+ROBOT_CONTACT_BOXES = [
+    (56, 108, 501, 652),
+    (517, 117, 983, 658),
+    (1029, 121, 1473, 658),
+    (1527, 66, 1998, 660),
 ]
-MECHANIC_SOPHIE_BOXES = [
-    (114, 217, 384, 729),
-    (519, 234, 788, 731),
-    (933, 250, 1206, 731),
-    (1352, 204, 1609, 731),
+TOILET_CONTACT_BOXES = [
+    (91, 75, 449, 601),
+    (590, 76, 920, 601),
+    (1121, 76, 1464, 601),
+    (1667, 85, 2041, 601),
 ]
-SEATED_SOPHIE_BOXES = [
-    (129, 81, 431, 639),
-    (665, 81, 934, 639),
-    (1199, 81, 1481, 639),
-    (1757, 87, 2041, 639),
-]
-TOILET_REAR_BOX = (172, 109, 662, 795)
-TOILET_FRONT_BOX = (1085, 396, 1527, 795)
 URGENT_SOPHIE_BOXES = [
     (137, 116, 361, 630),
     (597, 112, 907, 630),
@@ -46,6 +38,12 @@ WINTER_COAT_BOXES = [
     (637, 107, 864, 725),
     (1109, 107, 1337, 725),
     (1581, 107, 1808, 725),
+]
+SINGING_BOXES = [
+    (0, 0, 485, 810),
+    (485, 0, 971, 810),
+    (971, 0, 1456, 810),
+    (1456, 0, 1942, 810),
 ]
 
 
@@ -92,6 +90,44 @@ def resize(sprite: Image.Image, scale: float) -> Image.Image:
     )
 
 
+def remove_tiny_components(
+        sprite: Image.Image, minimum_pixels: int) -> Image.Image:
+    """Remove chroma-edge crumbs without touching readable sprite effects."""
+    cleaned = sprite.copy()
+    alpha = cleaned.getchannel("A")
+    pixels = alpha.load()
+    visited: set[tuple[int, int]] = set()
+    for y in range(alpha.height):
+        for x in range(alpha.width):
+            if pixels[x, y] == 0 or (x, y) in visited:
+                continue
+            component: list[tuple[int, int]] = []
+            pending = [(x, y)]
+            visited.add((x, y))
+            while pending:
+                current_x, current_y = pending.pop()
+                component.append((current_x, current_y))
+                for next_x, next_y in (
+                    (current_x - 1, current_y),
+                    (current_x + 1, current_y),
+                    (current_x, current_y - 1),
+                    (current_x, current_y + 1),
+                ):
+                    if not (0 <= next_x < alpha.width and
+                            0 <= next_y < alpha.height):
+                        continue
+                    point = (next_x, next_y)
+                    if pixels[next_x, next_y] == 0 or point in visited:
+                        continue
+                    visited.add(point)
+                    pending.append(point)
+            if len(component) < minimum_pixels:
+                for component_x, component_y in component:
+                    pixels[component_x, component_y] = 0
+    cleaned.putalpha(alpha)
+    return cleaned
+
+
 def composite_checked(cell: Image.Image, sprite: Image.Image,
                       position: tuple[int, int], label: str) -> None:
     x, y = position
@@ -104,27 +140,19 @@ def composite_checked(cell: Image.Image, sprite: Image.Image,
 
 
 def build_mechanic_row(root: Path) -> Image.Image:
-    prop_sheet = Image.open(
-        root / "art/update-action/mechanic-props-layer.png"
-    )
-    sophie_sheet = Image.open(
-        root / "art/update-action/sophie-mechanic-layer.png"
-    )
-    props = [extract(prop_sheet, box) for box in MECHANIC_PROP_BOXES]
-    sophies = [extract(sophie_sheet, box) for box in MECHANIC_SOPHIE_BOXES]
-    if len(props) != FRAME_COUNT or len(sophies) != FRAME_COUNT:
-        raise ValueError("Mechanic source frame count is not four")
+    sheet = Image.open(root / "art/update-action/robot-contact.png")
+    sprites = [extract(sheet, box) for box in ROBOT_CONTACT_BOXES]
+    if len(sprites) != FRAME_COUNT:
+        raise ValueError("Robot-contact source frame count is not four")
     row = Image.new("RGBA", (CELL_WIDTH * FRAME_COUNT, CELL_HEIGHT))
-
-    for frame, (prop, sophie) in enumerate(zip(props, sophies)):
+    for frame, sprite in enumerate(sprites):
         cell = Image.new("RGBA", (CELL_WIDTH, CELL_HEIGHT))
-        prop = resize(prop, 0.32)
-        sophie = resize(sophie, 0.28)
-        prop_position = (CELL_WIDTH - prop.width - 2,
-                         CELL_HEIGHT - prop.height - 5)
-        sophie_position = (3, CELL_HEIGHT - sophie.height - 7)
-        composite_checked(cell, prop, prop_position, "mechanic props")
-        composite_checked(cell, sophie, sophie_position, "mechanic Sophie")
+        sprite = resize(sprite, 0.33)
+        position = (
+            round((CELL_WIDTH - sprite.width) / 2),
+            CELL_HEIGHT - sprite.height - 6,
+        )
+        composite_checked(cell, sprite, position, "robot-contact scene")
         row.alpha_composite(cell, (frame * CELL_WIDTH, 0))
     return row
 
@@ -158,45 +186,39 @@ def build_winter_coat_row(root: Path) -> Image.Image:
     return row
 
 
-def upper_toilet_foreground(sprite: Image.Image) -> Image.Image:
-    """Keep only the near-facing seat arc that should cover Sophie's hips."""
-    top = round(sprite.height * 0.32)
-    bottom = round(sprite.height * 0.46)
-    result = sprite.crop((0, top, sprite.width, bottom))
-    visible = result.getchannel("A").getbbox()
-    if visible is None:
-        raise ValueError("Toilet foreground mask is empty")
-    return result.crop(visible)
-
-
 def build_toilet_row(root: Path) -> Image.Image:
-    toilet_sheet = Image.open(
-        root / "art/bathroom-actions/toilet-props-layer.png"
-    )
-    sophie_sheet = Image.open(
-        root / "art/bathroom-actions/sophie-toilet-pose-layer.png"
-    )
-    rear = resize(extract(toilet_sheet, TOILET_REAR_BOX), 0.165)
-    front = resize(
-        upper_toilet_foreground(extract(toilet_sheet, TOILET_FRONT_BOX)),
-        0.165,
-    )
-    sophies = [extract(sophie_sheet, box) for box in SEATED_SOPHIE_BOXES]
+    sheet = Image.open(root / "art/bathroom-actions/toilet-contact.png")
+    sprites = [extract(sheet, box) for box in TOILET_CONTACT_BOXES]
+    if len(sprites) != FRAME_COUNT:
+        raise ValueError("Toilet-contact source frame count is not four")
     row = Image.new("RGBA", (CELL_WIDTH * FRAME_COUNT, CELL_HEIGHT))
-
-    # All three layers share the same perceived seat center near (108, 136).
-    rear_position = (57, CELL_HEIGHT - rear.height - 7)
-    front_position = (69, 157)
-    for frame, sophie in enumerate(sophies):
+    for frame, sprite in enumerate(sprites):
         cell = Image.new("RGBA", (CELL_WIDTH, CELL_HEIGHT))
-        sophie = resize(sophie, 0.22)
-        sophie_position = (
-            round(108 - sophie.width * 0.50),
-            CELL_HEIGHT - sophie.height - 7,
+        sprite = resize(sprite, 0.36)
+        position = (
+            round((CELL_WIDTH - sprite.width) / 2),
+            CELL_HEIGHT - sprite.height - 6,
         )
-        composite_checked(cell, rear, rear_position, "toilet rear")
-        composite_checked(cell, sophie, sophie_position, "seated Sophie")
-        composite_checked(cell, front, front_position, "toilet foreground")
+        composite_checked(cell, sprite, position, "toilet-contact scene")
+        row.alpha_composite(cell, (frame * CELL_WIDTH, 0))
+    return row
+
+
+def build_singing_row(root: Path) -> Image.Image:
+    sheet = Image.open(root / "art/singing-action/sophie-singing.png")
+    sprites = [extract(sheet, box) for box in SINGING_BOXES]
+    if len(sprites) != FRAME_COUNT:
+        raise ValueError("Singing source frame count is not four")
+    row = Image.new("RGBA", (CELL_WIDTH * FRAME_COUNT, CELL_HEIGHT))
+    for frame, sprite in enumerate(sprites):
+        cell = Image.new("RGBA", (CELL_WIDTH, CELL_HEIGHT))
+        sprite = resize(sprite, 0.30)
+        sprite = remove_tiny_components(sprite, minimum_pixels=20)
+        position = (
+            round((CELL_WIDTH - sprite.width) / 2),
+            CELL_HEIGHT - sprite.height - 6,
+        )
+        composite_checked(cell, sprite, position, "singing Sophie")
         row.alpha_composite(cell, (frame * CELL_WIDTH, 0))
     return row
 
@@ -298,23 +320,27 @@ def main() -> None:
     mechanic_row = build_mechanic_row(root)
     toilet_row = build_toilet_row(root)
     urgent_row = build_urgent_bush_row(root)
+    singing_row = build_singing_row(root)
 
     output = Image.new(
-        "RGBA", (CELL_WIDTH * FRAME_COUNT, 19 * CELL_HEIGHT)
+        "RGBA", (CELL_WIDTH * FRAME_COUNT, 20 * CELL_HEIGHT)
     )
     output.alpha_composite(preserved)
     output.alpha_composite(mechanic_row, (0, 16 * CELL_HEIGHT))
     output.alpha_composite(toilet_row, (0, 17 * CELL_HEIGHT))
     output.alpha_composite(urgent_row, (0, 18 * CELL_HEIGHT))
+    output.alpha_composite(singing_row, (0, 19 * CELL_HEIGHT))
 
     update_path = root / "art/update-action/update-research.png"
     toilet_path = root / "art/bathroom-actions/toilet-break.png"
     urgent_path = root / "art/bathroom-actions/urgent-bush.png"
     winter_coat_path = root / "art/weather-actions/winter-coat-row.png"
+    singing_path = root / "art/singing-action/singing.png"
     save_png_atomic(mechanic_row, update_path)
     save_png_atomic(toilet_row, toilet_path)
     save_png_atomic(urgent_row, urgent_path)
     save_png_atomic(winter_coat_row, winter_coat_path)
+    save_png_atomic(singing_row, singing_path)
     save_preview(mechanic_row, update_path.with_name(
         "update-research-preview.png"
     ))
@@ -326,6 +352,9 @@ def main() -> None:
     ))
     save_preview(winter_coat_row, winter_coat_path.with_name(
         "winter-coat-preview.png"
+    ))
+    save_preview(singing_row, singing_path.with_name(
+        "singing-preview.png"
     ))
     atlas_temporary = atlas_path.with_name(atlas_path.name + ".tmp")
     atlas_temporary.unlink(missing_ok=True)

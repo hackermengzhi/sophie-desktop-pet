@@ -25,7 +25,8 @@ internal enum PetState
     JoyJump,
     Updating,
     ToiletBreak,
-    UrgentBush
+    UrgentBush,
+    Singing
 }
 
 internal static class LifeAnimations
@@ -50,6 +51,7 @@ internal static class LifeAnimations
         PetState.Updating => new(16, 4, true),
         PetState.ToiletBreak => new(17, 4, true),
         PetState.UrgentBush => new(18, 4, false),
+        PetState.Singing => new(19, 4, false),
         PetState.Working => new(7, 4, true),
         PetState.Reviewing => new(7, 4, true),
         _ => new(0, 4, true)

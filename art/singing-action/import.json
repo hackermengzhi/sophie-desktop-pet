@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "state": "Singing",
+  "slug": "singing",
+  "source": "art/singing-action/sophie-singing.png",
+  "scale": 0.3,
+  "row": 19,
+  "boxes": [
+    [0, 0, 485, 810],
+    [485, 0, 971, 810],
+    [971, 0, 1456, 810],
+    [1456, 0, 1942, 810]
+  ],
+  "loops": false,
+  "probability": {
+    "clearDay": 7,
+    "other": 5
+  },
+  "islandX": 240
+}

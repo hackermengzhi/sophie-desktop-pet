@@ -1,0 +1,11 @@
+Combine the two supplied pixel-art prototype sheets into one coherent horizontal four-frame animation strip on a perfectly flat solid #FF00FF magenta chroma-key background. The first prototype defines the seated adult Sophie exactly; the second defines the same clean white porcelain toilet exactly. Preserve Sophie's black side ponytail, face, black sleeveless top, denim shorts, sandals, toilet-paper poses, proportions and pixel rendering. Preserve the toilet's rectangular tank, flush handle, oval seat, bowl and pedestal. Do not redesign either prototype.
+
+Create a physically believable fixed 3/4 front view in every frame. Sophie must actually sit ON the toilet seat: hips centered at seat height, tank behind her back, thighs projecting forward, knees bent near 90 degrees, and both feet on the ground. Use correct occlusion with no clipping:
+
+- the tank and rear bowl are behind Sophie;
+- only the small left and right seat edges may appear beside her hips;
+- no horizontal porcelain strip may cross her stomach, lap, knees or shins;
+- both thighs, knees, lower legs, sandals, hands and toilet-paper roll remain fully in front of the bowl;
+- the front bowl and pedestal stay behind her legs and connect naturally to the floor baseline.
+
+Frame 1: modest blush, holding the paper roll at her right side. Frame 2: calm seated pose with the roll near her lap. Frame 3: tearing one sheet with both hands and a relieved closed-eye smile. Frame 4: leaning slightly forward to stand, roll in one hand. Exactly four evenly spaced non-overlapping scenes, same toilet placement, camera, scale, seat anchor and foot baseline. Cute non-graphic bathroom humour, fully clothed, no exposed anatomy and no bodily waste. Crisp 8-bit/16-bit pixel art, hard edges, restricted palette. No second toilet, duplicated seat, floating porcelain pieces, crossed layers, extra limbs, scenery, bathroom wall, floor plane, gradients, blur, text, logo, border or grid.

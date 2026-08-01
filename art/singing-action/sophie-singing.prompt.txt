@@ -1,0 +1,9 @@
+Create one horizontal four-frame pixel-art animation sheet of the exact same adult woman Sophie shown in the reference image. Preserve her recognizable face, large dark eyes, side-parted dark brown ponytail, black sleeveless peplum top, blue denim shorts, bare legs, and brown sandals. Full body visible in every frame, consistent character scale and fixed camera, clean retro 16-bit/8-bit-inspired game sprite rendering with crisp hard pixel edges and no smoothing.
+
+The four clearly separated sequential poses, left to right:
+1. Sophie holds a cute small golden handheld microphone near her mouth with one hand and begins singing, gentle happy expression, two tiny musical notes beside her head.
+2. Sophie sings enthusiastically into the microphone, free hand extended naturally, bright joyful smile, several small colorful musical notes floating upward.
+3. Sophie performs a big high note with eyes closed, microphone touching the correct side of her mouth, head tilted slightly upward, free fist raised, a tiny sparkle and music note above her; keep the pose charming rather than dramatic.
+4. Sophie finishes the song, microphone lowered in one hand, gives a delighted little bow with rosy cheeks and one hand over her heart, two tiny hearts and one fading music note.
+
+All hands must have clear anatomy and physically grip the microphone. Keep the microphone in the same hand throughout. Do not add a stage, chair, book, magnifying glass, robot, table, toilet, speakers, instruments, text, border, labels, UI, watermark, or extra people. Do not crop hair, hands, feet, microphone, notes, hearts, or sparkles. Use a perfectly flat opaque chroma-key magenta background RGB 255,0,255 with absolutely no shadows, gradients, texture, floor, or magenta lighting cast on the character. Leave generous blank magenta space between frames for deterministic cropping.
