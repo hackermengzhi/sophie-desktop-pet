@@ -28,6 +28,8 @@ internal sealed class WorldControl : Avalonia.Controls.Control
     private double _phase;
     private bool? _nightOverride;
     private bool? _liveIsDayOverride;
+    private UpdateState? _updateState;
+    private double? _updateProgress;
 
     public WorldControl()
     {
@@ -119,6 +121,15 @@ internal sealed class WorldControl : Avalonia.Controls.Control
         InvalidateVisual();
     }
 
+    public void SetUpdateStatus(UpdateState? state, double? progress)
+    {
+        _updateState = state;
+        _updateProgress = progress is double value
+            ? Math.Clamp(value, 0, 1)
+            : null;
+        InvalidateVisual();
+    }
+
     public bool IsOverPet(Point point) => PetBounds.Contains(point);
 
     public void SetWorldOpen(bool isOpen)
@@ -165,6 +176,7 @@ internal sealed class WorldControl : Avalonia.Controls.Control
             DrawMiniGround(context);
             DrawMiniWeather(context);
             DrawPet(context);
+            DrawUpdateProgress(context);
             return;
         }
 
@@ -190,6 +202,7 @@ internal sealed class WorldControl : Avalonia.Controls.Control
             DrawWeather(context);
             DrawWorldWeatherIndicators(context);
             DrawPet(context);
+            DrawUpdateProgress(context);
         }
 
         context.DrawRectangle(
@@ -435,6 +448,63 @@ internal sealed class WorldControl : Avalonia.Controls.Control
             _lifeAtlas,
             source,
             PetBounds);
+    }
+
+    private void DrawUpdateProgress(DrawingContext context)
+    {
+        if (_updateState is null)
+        {
+            return;
+        }
+
+        var bounds = IsWorldOpen
+            ? new Rect(164, 244, 112, 9)
+            : new Rect(34, 146, 82, 9);
+        var outline = Brush(255, 28, 24, 35);
+        var track = Brush(235, 78, 67, 82);
+        var fill = _updateState == UpdateState.Installing
+            ? Brush(255, 255, 190, 75)
+            : Brush(255, 82, 218, 174);
+
+        context.DrawRectangle(outline, null, bounds);
+        context.DrawRectangle(
+            track,
+            null,
+            new Rect(
+                bounds.X + 2,
+                bounds.Y + 2,
+                bounds.Width - 4,
+                bounds.Height - 4));
+
+        var y = bounds.Y + 3;
+        var units = Math.Max(1, (int)((bounds.Width - 5) / 5));
+        var contentWidth = units * 5 - 1;
+        var firstX = bounds.X +
+            Math.Floor((bounds.Width - contentWidth) / 2);
+        if (_updateState == UpdateState.Downloading &&
+            _updateProgress is double progress)
+        {
+            var filled = progress >= 1
+                ? units
+                : (int)Math.Floor(progress * units);
+            for (var unit = 0; unit < filled; unit++)
+            {
+                context.DrawRectangle(
+                    fill, null, new Rect(firstX + unit * 5, y, 4, 3));
+            }
+            return;
+        }
+
+        var lead = (int)Math.Floor(_phase * 7) % (units + 4) - 3;
+        for (var offset = 0; offset < 3; offset++)
+        {
+            var unit = lead - offset;
+            if (unit >= 0 && unit < units)
+            {
+                context.DrawRectangle(
+                    fill, null, new Rect(firstX + unit * 5, y, 4, 3));
+            }
+        }
     }
 
     private static double Wrap(double value, double min, double max)

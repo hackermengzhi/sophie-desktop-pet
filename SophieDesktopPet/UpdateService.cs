@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -26,7 +27,8 @@ internal sealed record PreparedUpdate(
 internal sealed record UpdateStatus(
     UpdateState State,
     string Text,
-    PreparedUpdate? Prepared = null);
+    PreparedUpdate? Prepared = null,
+    double? Progress = null);
 
 internal sealed class UpdateService : IAsyncDisposable
 {
@@ -148,10 +150,9 @@ internal sealed class UpdateService : IAsyncDisposable
             if (!await ValidateCachedDownloadAsync(
                     finalPath, asset, token))
             {
-                Publish(new UpdateStatus(
-                    UpdateState.Downloading,
-                    $"更新：正在下载 v{availableVersion}…"));
-                await DownloadAssetAsync(asset, finalPath, token);
+                PublishDownloadProgress(availableVersion, 0);
+                await DownloadAssetAsync(
+                    asset, availableVersion, finalPath, token);
             }
 
             var prepared = new PreparedUpdate(
@@ -252,6 +253,7 @@ internal sealed class UpdateService : IAsyncDisposable
 
     private async Task DownloadAssetAsync(
         GitHubAsset asset,
+        Version availableVersion,
         string finalPath,
         CancellationToken cancellationToken)
     {
@@ -288,6 +290,7 @@ internal sealed class UpdateService : IAsyncDisposable
             using var hasher = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
             var buffer = new byte[1024 * 128];
             long total = 0;
+            var lastPublishedAt = Stopwatch.GetTimestamp();
             while (true)
             {
                 var read = await source.ReadAsync(buffer, cancellationToken);
@@ -299,6 +302,22 @@ internal sealed class UpdateService : IAsyncDisposable
                     buffer.AsMemory(0, read), cancellationToken);
                 hasher.AppendData(buffer, 0, read);
                 total += read;
+                if (total > asset.Size)
+                {
+                    throw new InvalidDataException(
+                        "更新包大于发布信息中的文件大小。");
+                }
+                var now = Stopwatch.GetTimestamp();
+                if (Stopwatch.GetElapsedTime(lastPublishedAt, now) >=
+                    TimeSpan.FromMilliseconds(100))
+                {
+                    PublishDownloadProgress(
+                        availableVersion,
+                        asset.Size > 0
+                            ? Math.Min((double)total / asset.Size, 0.99)
+                            : 0);
+                    lastPublishedAt = now;
+                }
             }
             await destination.FlushAsync(cancellationToken);
 
@@ -309,6 +328,7 @@ internal sealed class UpdateService : IAsyncDisposable
             }
             ValidateDigest(hasher.GetHashAndReset(), asset.Digest);
             File.Move(partialPath, finalPath, true);
+            PublishDownloadProgress(availableVersion, 1);
         }
         catch
         {
@@ -318,6 +338,16 @@ internal sealed class UpdateService : IAsyncDisposable
             }
             throw;
         }
+    }
+
+    private void PublishDownloadProgress(
+        Version version,
+        double progress)
+    {
+        Publish(new UpdateStatus(
+            UpdateState.Downloading,
+            $"更新：正在下载 v{version}…",
+            Progress: Math.Clamp(progress, 0, 1)));
     }
 
     private static async Task<bool> ValidateCachedDownloadAsync(

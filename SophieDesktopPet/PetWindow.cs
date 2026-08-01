@@ -34,6 +34,7 @@ internal sealed class PetWindow : Window
     private bool _autoLife = true;
     private bool _automaticWeather = true;
     private bool _weatherRefreshRunning;
+    private bool _showingUpdate;
     private bool _isClosing;
     private bool _weatherResourcesDisposed;
     private bool _moving;
@@ -46,6 +47,7 @@ internal sealed class PetWindow : Window
     private MenuItem? _weatherStatusMenu;
     private MenuItem? _updateMenu;
     private Task? _updateMonitorTask;
+    private EventHandler<UpdateStatus>? _updateStatusChangedHandler;
 
     public PetWindow()
     {
@@ -67,18 +69,34 @@ internal sealed class PetWindow : Window
 
         ConfigureInput();
         ConfigureMenu();
-        _updateService.StatusChanged += (_, status) =>
-            Dispatcher.UIThread.Post(() => ApplyUpdateStatus(status));
+        _updateStatusChangedHandler = (_, status) =>
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (!_isClosing)
+                {
+                    ApplyUpdateStatus(status);
+                }
+            });
+        _updateService.StatusChanged += _updateStatusChangedHandler;
         Opened += async (_, _) =>
         {
             PlaceNearBottomRight();
+            ApplyUpdateStatus(_updateService.Status);
             StartUpdateMonitor();
             await RefreshWeatherAsync();
         };
         Closed += (_, _) =>
         {
             _isClosing = true;
+            if (_timer is not null)
+            {
+                _timer.Stop();
+            }
             _weatherTimer.Stop();
+            if (_updateStatusChangedHandler is not null)
+            {
+                _updateService.StatusChanged -= _updateStatusChangedHandler;
+            }
             _weatherLifetime.Cancel();
             _updateLifetime.Cancel();
             if (!_weatherRefreshRunning)
@@ -210,11 +228,12 @@ internal sealed class PetWindow : Window
 
     private void Tick()
     {
-        var animation = LifeAnimations.For(_state);
+        var displayState = _showingUpdate ? PetState.Updating : _state;
+        var animation = LifeAnimations.For(displayState);
         _world.ShowFrame(animation.Row, _frame);
         _world.AdvanceEnvironment();
         _frameDelayTicks++;
-        if (_frameDelayTicks >= FrameHoldTicks(_state))
+        if (_frameDelayTicks >= FrameHoldTicks(displayState))
         {
             _frameDelayTicks = 0;
             _frame++;
@@ -222,6 +241,11 @@ internal sealed class PetWindow : Window
             {
                 _frame = animation.Loops ? 0 : animation.Frames - 1;
             }
+        }
+
+        if (_showingUpdate)
+        {
+            return;
         }
 
         if (_moving)
@@ -316,6 +340,11 @@ internal sealed class PetWindow : Window
     private void ChooseNextIslandActivity()
     {
         if (TryChooseWeatherActivity(island: true))
+        {
+            return;
+        }
+
+        if (TryChoosePrivateActivity(island: true))
         {
             return;
         }
@@ -446,6 +475,11 @@ internal sealed class PetWindow : Window
     private void ChooseNextDesktopActivity()
     {
         if (TryChooseWeatherActivity(island: false))
+        {
+            return;
+        }
+
+        if (TryChoosePrivateActivity(island: false))
         {
             return;
         }
@@ -631,6 +665,32 @@ internal sealed class PetWindow : Window
         return false;
     }
 
+    private bool TryChoosePrivateActivity(bool island)
+    {
+        var roll = _random.Next(100);
+        if (roll < 2)
+        {
+            BeginPositionedActivity(
+                PetState.ToiletBreak,
+                _random.Next(34, 51),
+                island,
+                255);
+            return true;
+        }
+
+        if (roll < 5)
+        {
+            BeginPositionedActivity(
+                PetState.UrgentBush,
+                _random.Next(28, 43),
+                island,
+                210);
+            return true;
+        }
+
+        return false;
+    }
+
     private void BeginPositionedActivity(
         PetState activity,
         int ticks,
@@ -784,6 +844,35 @@ internal sealed class PetWindow : Window
         _updateMenu.Header = status.Text;
         _updateMenu.IsEnabled =
             status.State is UpdateState.Ready or UpdateState.Error;
+
+        var showingUpdate = status.State is
+            UpdateState.Checking or
+            UpdateState.Downloading or
+            UpdateState.Installing;
+        _world.SetUpdateStatus(
+            showingUpdate ? status.State : null,
+            status.Progress);
+        if (showingUpdate == _showingUpdate)
+        {
+            return;
+        }
+
+        _showingUpdate = showingUpdate;
+        _frame = 0;
+        _frameDelayTicks = 0;
+        if (showingUpdate)
+        {
+            _lifePhase = LifePhase.IdleBeat;
+            _pendingActivity = null;
+            _pendingActivityTicks = 0;
+            _walkTargetX = double.NaN;
+            _moving = false;
+            _ticksRemaining = IdleTicks;
+        }
+        else
+        {
+            BeginIdleBeat();
+        }
     }
 
     private async Task HandleUpdateMenuAsync()

@@ -22,7 +22,10 @@ internal enum PetState
     Sweat,
     BackpackOuting,
     Affectionate,
-    JoyJump
+    JoyJump,
+    Updating,
+    ToiletBreak,
+    UrgentBush
 }
 
 internal static class LifeAnimations
@@ -44,6 +47,9 @@ internal static class LifeAnimations
         PetState.BackpackOuting => new(12, 4, false),
         PetState.Affectionate => new(14, 4, true),
         PetState.JoyJump => new(15, 4, false),
+        PetState.Updating => new(16, 4, true),
+        PetState.ToiletBreak => new(17, 4, true),
+        PetState.UrgentBush => new(18, 4, false),
         PetState.Working => new(7, 4, true),
         PetState.Reviewing => new(7, 4, true),
         _ => new(0, 4, true)

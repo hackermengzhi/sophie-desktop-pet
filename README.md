@@ -15,10 +15,11 @@
 ## Highlights
 
 - Transparent, frameless, always-on-top macOS desktop pet.
-- Fifteen independently generated four-frame life animations: idle, walking
+- Eighteen four-frame pixel animations: idle, walking
   right, walking left, sitting, eating, sleeping, gardening, reading, rain
   umbrella, snowman building, shivering, cooling down, backpack outings, and
-  joyful jumps, and an affectionate expression.
+  joyful jumps, an affectionate expression, update-robot repair, a toilet-paper
+  break, and a blushing urgent search for a private bush.
 - Every frame is held for 500 ms. A guaranteed activity cycle follows 20
   seconds of idle time with one random non-idle action.
 - Approximate automatic location via [ipwho.is](https://ipwho.is/) and current
@@ -39,7 +40,9 @@
   spontaneous joyful jump, or show a sweet affectionate expression. These are
   automatic life moments, not menu actions.
 - Checks the latest GitHub release at launch and hourly. A newer signed package
-  is downloaded and SHA-256 verified, but installed only after a menu click.
+  is downloaded and SHA-256 verified. While checking, downloading, or
+  installing, Sophie repairs a tiny robot beside a pixel progress bar; the
+  package is installed only after a menu click.
 - Self-contained Apple Silicon build; no separate .NET installation required.
 
 ## Island world
@@ -101,7 +104,7 @@ it as an Actions artifact: GitHub would wrap the release ZIP in another ZIP.
 User downloads are the direct assets on the repository Releases page.
 
 For a production release, update `Version` in the project and push the matching
-tag, such as `v1.4.1`. `release.yml` builds, signs, verifies, retains the Actions
+tag, such as `v1.5.0`. `release.yml` builds, signs, verifies, retains the Actions
 artifact, and creates the GitHub Release with the ZIP and SHA-256 file.
 
 ## Project layout
