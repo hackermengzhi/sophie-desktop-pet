@@ -38,6 +38,10 @@ internal sealed class UpdateService : IAsyncDisposable
         "Sophie-Desktop-Pet-macOS-arm64.zip";
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromHours(1);
+    private static readonly TimeSpan MinimumDownloadPresentation =
+        TimeSpan.FromSeconds(20);
+    private static readonly TimeSpan ProgressPublishInterval =
+        TimeSpan.FromMilliseconds(100);
 
     private readonly Version _currentVersion;
     private readonly HttpClient _httpClient;
@@ -150,11 +154,19 @@ internal sealed class UpdateService : IAsyncDisposable
             if (!await ValidateCachedDownloadAsync(
                     finalPath, asset, token))
             {
+                var presentationStartedAt = Stopwatch.GetTimestamp();
                 PublishDownloadProgress(availableVersion, 0);
                 await DownloadAssetAsync(
-                    asset, availableVersion, finalPath, token);
+                    asset,
+                    availableVersion,
+                    finalPath,
+                    presentationStartedAt,
+                    token);
+                await CompleteDownloadPresentationAsync(
+                    availableVersion, presentationStartedAt, token);
             }
 
+            token.ThrowIfCancellationRequested();
             var prepared = new PreparedUpdate(
                 availableVersion,
                 release.TagName,
@@ -255,6 +267,7 @@ internal sealed class UpdateService : IAsyncDisposable
         GitHubAsset asset,
         Version availableVersion,
         string finalPath,
+        long presentationStartedAt,
         CancellationToken cancellationToken)
     {
         var directory = Path.GetDirectoryName(finalPath) ??
@@ -309,13 +322,14 @@ internal sealed class UpdateService : IAsyncDisposable
                 }
                 var now = Stopwatch.GetTimestamp();
                 if (Stopwatch.GetElapsedTime(lastPublishedAt, now) >=
-                    TimeSpan.FromMilliseconds(100))
+                    ProgressPublishInterval)
                 {
-                    PublishDownloadProgress(
+                    PublishPacedDownloadProgress(
                         availableVersion,
                         asset.Size > 0
-                            ? Math.Min((double)total / asset.Size, 0.99)
-                            : 0);
+                            ? (double)total / asset.Size
+                            : 0,
+                        presentationStartedAt);
                     lastPublishedAt = now;
                 }
             }
@@ -328,7 +342,6 @@ internal sealed class UpdateService : IAsyncDisposable
             }
             ValidateDigest(hasher.GetHashAndReset(), asset.Digest);
             File.Move(partialPath, finalPath, true);
-            PublishDownloadProgress(availableVersion, 1);
         }
         catch
         {
@@ -338,6 +351,53 @@ internal sealed class UpdateService : IAsyncDisposable
             }
             throw;
         }
+    }
+
+    private void PublishPacedDownloadProgress(
+        Version version,
+        double actualProgress,
+        long presentationStartedAt)
+    {
+        var elapsed = Stopwatch.GetElapsedTime(presentationStartedAt);
+        var timeProgress = elapsed.TotalMilliseconds /
+            MinimumDownloadPresentation.TotalMilliseconds;
+        PublishDownloadProgress(
+            version,
+            Math.Min(
+                Math.Clamp(actualProgress, 0, 1),
+                Math.Clamp(timeProgress, 0, 0.99)));
+    }
+
+    private async Task CompleteDownloadPresentationAsync(
+        Version version,
+        long presentationStartedAt,
+        CancellationToken cancellationToken)
+    {
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var elapsed = Stopwatch.GetElapsedTime(presentationStartedAt);
+            if (elapsed >= MinimumDownloadPresentation)
+            {
+                break;
+            }
+
+            PublishDownloadProgress(
+                version,
+                Math.Min(
+                    elapsed.TotalMilliseconds /
+                        MinimumDownloadPresentation.TotalMilliseconds,
+                    0.99));
+            var remaining = MinimumDownloadPresentation - elapsed;
+            await Task.Delay(
+                remaining < ProgressPublishInterval
+                    ? remaining
+                    : ProgressPublishInterval,
+                cancellationToken);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        PublishDownloadProgress(version, 1);
     }
 
     private void PublishDownloadProgress(

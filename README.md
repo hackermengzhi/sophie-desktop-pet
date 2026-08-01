@@ -43,7 +43,8 @@
 - Checks the latest GitHub release at launch and hourly. A newer signed package
   is downloaded and SHA-256 verified. While checking, downloading, or
   installing, Sophie repairs a tiny robot beside a pixel progress bar; the
-  package is installed only after a menu click.
+  download presentation lasts at least 20 seconds so the animation remains
+  readable, and the package is installed only after a menu click.
 - Self-contained Apple Silicon build; no separate .NET installation required.
 
 ## Island world
