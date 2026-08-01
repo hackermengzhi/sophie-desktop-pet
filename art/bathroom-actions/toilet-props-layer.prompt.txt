@@ -1,0 +1,7 @@
+Create a pixel-art asset sheet on a perfectly flat solid #FF00FF magenta chroma-key background containing two perfectly aligned views of the SAME clean, ordinary household porcelain toilet in fixed 3/4 front perspective, with NO person, no bathroom, no wall, no floor, no text and no bodily waste. The perspective must be physically believable: visible rectangular cistern/tank behind, hinged oval seat at sitting height, bowl narrowing into a pedestal base, flush handle, and stable ground contact. Cute compact proportions suitable for a chibi desktop-pet world, but unmistakably a real toilet rather than a chair or bucket. White porcelain with cool blue-gray pixel shading, dark navy outline, crisp 8-bit/16-bit sprite art, restricted palette, no gradients or blur.
+
+Left asset is the REAR LAYER only: cistern, flush handle, rear half of the bowl and rear seat hinge. Omit the front seat rim, front bowl and pedestal so a seated character can be placed in front of this layer.
+
+Right asset is the FOREGROUND LAYER only: front half of the oval seat rim, front bowl shell and pedestal base. Omit the tank and rear bowl. When placed at the exact same anchor as the left asset, the two pieces must join into one complete toilet with matching contours and lighting.
+
+Keep both assets exactly the same camera angle, scale, seat height and ground baseline. Place them far apart with generous transparent gutters. Do not include duplicate full toilets, toilet paper, brushes, plungers, sinks, props, people, labels, watermark, shadows, or scenery.

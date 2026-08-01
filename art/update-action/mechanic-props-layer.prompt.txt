@@ -1,0 +1,10 @@
+Create one horizontal four-frame pixel-art prop animation strip on a perfectly flat solid #FF00FF magenta chroma-key background with NO human or animal character. Original prop design, visually informed by the high-tech fantasy mechanical language of Dungeon Fighter Online's female Mechanic class: compact articulated machinery, dark steel inner joints, clean ivory armor plates, brass fasteners, cyan-blue energy lights, and a warm workshop personality. Do not copy a named robot, character costume, logo, or exact game asset.
+
+Each frame must show the SAME believable waist-high workbench in fixed 3/4 front perspective. The table needs a clearly readable wooden or dark-metal tabletop with visible thickness, two front legs and two rear legs placed in correct perspective, a lower cross-brace, and stable contact with the ground. Centered on it is the SAME cute palm-sized service robot: round armored head, two expressive cyan pixel eyes, compact body, visible shoulder/elbow joints, tiny tool arms, and a small chest energy core. The robot sits physically ON the tabletop, not floating.
+
+Frame 1: robot powered off, eyes dark, magnifying glass lying beside it.
+Frame 2: one side panel open, a wrench resting near the panel, faint blue core glow.
+Frame 3: robot testing, both eyes lighting cyan and one arm rising, two tiny harmless blue sparks.
+Frame 4: repaired robot cheerfully waving, bright stable core, one tiny pixel heart above it.
+
+Same camera, scale, table dimensions, robot identity, light direction and ground baseline in every frame. Exactly four evenly spaced, non-overlapping cells with generous transparent gutters. Crisp 8-bit/16-bit sprite art, hard pixel edges, restricted palette, no gradients, no room background, no floor, no text, no watermark, no people, no giant mech, no weapons.

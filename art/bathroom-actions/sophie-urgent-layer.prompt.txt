@@ -1,0 +1,10 @@
+Use the supplied Sophie pixel-art reference as the exact identity and style guide. Create one horizontal four-frame animation strip containing ONLY Sophie on a perfectly flat solid #FF00FF magenta chroma-key background, with no bush, no toilet, no furniture, no scenery, no text and no bodily waste. Preserve her black side-ponytail hair, warm skin, large dark eyes, sleeveless black top, blue denim shorts, sandals, chibi proportions, palette, black pixel outline, and crisp 8-bit/16-bit game-sprite rendering.
+
+Tell a clear, innocent, comedic bathroom-urgency story with anatomically believable poses and no exposed private anatomy:
+
+Frame 1: standing with knees pressed together, cheeks lightly blushing, one hand near her stomach, worried expression.
+Frame 2: urgently hurrying toward the viewer's right with short quick steps, stronger blush, anxious face, holding a small white toilet-paper roll.
+Frame 3: crouched low behind an intentionally invisible waist-high bush, body facing slightly away in modest 3/4 view, only head, shoulders, bent knees and the hand holding toilet paper meant to remain visible above/around foliage; embarrassed expression.
+Frame 4: same crouched anchor and camera as frame 3, calmer relieved closed-eye smile, still holding the toilet-paper roll visibly.
+
+Exactly four evenly spaced non-overlapping sprites with generous solid-magenta gutters. Frames 3 and 4 must share the same crouch height and ground baseline. No extra limbs, no bush pixels, no bathroom objects, no speech bubbles, no odor lines, no nudity, no fetish framing, no gradients, blur, antialiasing, captions or logos.

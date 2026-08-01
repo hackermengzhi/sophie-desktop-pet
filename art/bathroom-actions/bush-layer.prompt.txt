@@ -1,0 +1,6 @@
+Create a transparent-looking pixel-art prop sheet on a perfectly flat solid #FF00FF magenta chroma-key background with NO person, no animal, no toilet, no text and no bodily waste. Show exactly two separated animation variants of the SAME dense privacy bush in fixed 3/4 front perspective. The bush must be a believable cluster of overlapping rounded leafy branches rooted in a tiny patch of soil, wide enough to hide the lower body of a crouching chibi character. Deep forest-green shadow leaves, medium emerald leaves, small warm highlights, dark navy-green pixel outline, crisp 8-bit/16-bit game sprite, restricted palette.
+
+Left variant: calm bush, compact rounded silhouette with a few visible branch tips and a small opening near the upper middle where a character's head could appear behind it.
+Right variant: the same bush with two outer leaf clusters shifted slightly as if rustled from behind, but identical size, camera, lighting and ground baseline.
+
+Keep the two bushes far apart with generous solid-magenta gutters. No square hedge, no rectangular wall of leaves, no potted plant, no flowers, no fruit, no scenery, no ground plane beyond a tiny soil patch, no labels, watermark, gradients, blur or antialiasing.

@@ -6,8 +6,11 @@ obj/
 *.pdb
 *.zip
 *.dmg
+dist/
 .idea/
 .vscode/
+__pycache__/
+*.pyc
 art/weather-actions/*.response.json
 art/weather-actions/decoded/
 art/weather-actions/frames/

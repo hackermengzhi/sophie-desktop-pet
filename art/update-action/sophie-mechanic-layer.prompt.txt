@@ -1,0 +1,10 @@
+Use the supplied Sophie pixel-art reference as the exact identity and style guide. Create one horizontal four-frame animation strip containing ONLY Sophie, on a perfectly flat solid #FF00FF magenta chroma-key background with no furniture, no robot, no scenery, no text. Preserve her black side-ponytail hair, warm skin, large dark eyes, sleeveless black top, blue denim shorts, sandals, chibi proportions, palette, black pixel outline, and crisp 8-bit/16-bit game-sprite rendering.
+
+All four frames use the same fixed 3/4 front camera, scale, feet baseline, lighting, and body proportions. Sophie is leaning forward at a waist-high workbench that is intentionally invisible, repairing a small robot that is intentionally invisible. Her hands must make physically believable contact with an invisible object in front of her at tabletop height.
+
+Frame 1: curious inspection, one hand steadying the invisible robot and the other holding a tiny magnifying glass, focused eyes.
+Frame 2: careful repair, holding a small wrench and turning it with a subtle wrist movement.
+Frame 3: testing, pressing an invisible switch with one finger while leaning closer, hopeful expression.
+Frame 4: successful result, straightening slightly with a pleased smile and a tiny thumbs-up, while still beside the invisible work area.
+
+Keep the motion subtle and loop-friendly. The strip must have exactly four evenly spaced, non-overlapping sprites and generous transparent gutters. Do not add extra limbs, stools, tables, tools floating by themselves, background shadows, gradients, blur, antialiasing, captions, logos, or any other character.

@@ -1,12 +1,12 @@
 # Update research animation
 
 `update-research.png` is the four-frame production row used while Sophie
-checks, downloads, or installs an update. Sophie sits behind a workbench and
-repairs a tiny robot whose indicator changes from amber to cyan. It is built
-with `tools/build_special_life_rows.py`.
+checks, downloads, or installs an update. She inspects and repairs a tiny
+armoured service robot on a physically grounded workbench; the sequence moves
+from a powered-off robot through repair and testing to a cheerful wave.
 
-`update-research.prompt.txt` and `reference-sophie.png` record the attempted
-relay image-generation input. The relay returned HTTP 502 on every production
-request, so no generated source was accepted. The deterministic fallback keeps
-Sophie's original face, body, clothing, hands, book, baseline, and alpha edges
-unchanged.
+The Sophie and prop sheets are generated separately from the recorded prompts
+and `reference-sophie.png`. `tools/build_special_life_rows.py` then delegates to
+`tools/composite_generated_life_rows.py`, which removes the chroma key, applies
+shared per-row scales and anchors, and assembles the production atlas without
+changing rows 0-15.

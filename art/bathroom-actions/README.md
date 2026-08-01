@@ -7,5 +7,10 @@ shown.
 - `urgent-bush.png`: Sophie blushes, becomes visibly worried, finds a leafy
   bush, and crouches behind it while holding paper.
 
-Both rows are assembled from Sophie's approved source pixels and deterministic
-pixel props by `tools/build_special_life_rows.py`.
+Sophie, the toilet layers, and the bush layers are generated separately from
+the prompts stored beside them. `tools/build_special_life_rows.py` delegates to
+`tools/composite_generated_life_rows.py`, which uses fixed camera anchors and
+explicit occlusion order:
+
+- toilet rear layer, seated Sophie, then only the near seat-rim arc;
+- urgent Sophie, privacy bush, then the hand-and-paper foreground detail.
