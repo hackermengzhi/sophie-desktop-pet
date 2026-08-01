@@ -26,7 +26,8 @@ internal enum PetState
     Updating,
     ToiletBreak,
     UrgentBush,
-    Singing
+    Singing,
+    CatNuzzle
 }
 
 internal static class LifeAnimations
@@ -49,9 +50,10 @@ internal static class LifeAnimations
         PetState.Affectionate => new(14, 4, true),
         PetState.JoyJump => new(15, 4, false),
         PetState.Updating => new(16, 4, true),
-        PetState.ToiletBreak => new(17, 4, true),
+        PetState.ToiletBreak => new(17, 4, false),
         PetState.UrgentBush => new(18, 4, false),
         PetState.Singing => new(19, 4, false),
+        PetState.CatNuzzle => new(20, 4, false),
         PetState.Working => new(7, 4, true),
         PetState.Reviewing => new(7, 4, true),
         _ => new(0, 4, true)
@@ -59,6 +61,26 @@ internal static class LifeAnimations
 }
 
 internal readonly record struct AnimationDefinition(int Row, int Frames, bool Loops);
+
+internal enum CatState
+{
+    Idle,
+    WalkingRight,
+    WalkingLeft,
+    Sleeping
+}
+
+internal static class CatAnimations
+{
+    public static AnimationDefinition For(CatState state) => state switch
+    {
+        CatState.Idle => new(0, 4, true),
+        CatState.WalkingRight => new(1, 4, true),
+        CatState.WalkingLeft => new(2, 4, true),
+        CatState.Sleeping => new(3, 4, true),
+        _ => new(0, 4, true)
+    };
+}
 
 internal static class Animations
 {

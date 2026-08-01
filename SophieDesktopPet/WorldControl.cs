@@ -13,10 +13,15 @@ internal sealed class WorldControl : Avalonia.Controls.Control
     private const double PetBaseHeight = 69.333;
     private const double WorldPetWidth = 48;
     private const double WorldPetHeight = 52;
+    private const double DesktopCatWidth = 43;
+    private const double DesktopCatHeight = 46.6;
+    private const double WorldCatWidth = 31;
+    private const double WorldCatHeight = 33.6;
 
     private static readonly Rect SceneBounds = new(10, 8, 420, 252);
 
     private readonly Bitmap _lifeAtlas;
+    private readonly Bitmap _catAtlas;
     private readonly Bitmap _miniGround;
     private readonly Bitmap _weatherIcons;
     private readonly Bitmap _dayWorld;
@@ -25,6 +30,9 @@ internal sealed class WorldControl : Avalonia.Controls.Control
     private readonly Bitmap _skyMask;
     private int _row;
     private int _column;
+    private int _catRow;
+    private int _catColumn;
+    private bool _catVisible = true;
     private double _phase;
     private bool? _nightOverride;
     private bool? _liveIsDayOverride;
@@ -36,6 +44,10 @@ internal sealed class WorldControl : Avalonia.Controls.Control
         using var lifeStream = AssetLoader.Open(
             new Uri("avares://SophieDesktopPet/Assets/sophie-life.png"));
         _lifeAtlas = new Bitmap(lifeStream);
+
+        using var catStream = AssetLoader.Open(
+            new Uri("avares://SophieDesktopPet/Assets/sophie-cat-life.png"));
+        _catAtlas = new Bitmap(catStream);
 
         using var groundStream = AssetLoader.Open(
             new Uri("avares://SophieDesktopPet/Assets/mini-ground.png"));
@@ -68,6 +80,7 @@ internal sealed class WorldControl : Avalonia.Controls.Control
     public double PetX { get; set; } = 25;
     public double PetY { get; set; } = 20;
     public double PetScale { get; set; } = 1.55;
+    public double CatX { get; set; } = 94;
     public bool IsWorldOpen { get; private set; }
     public WeatherMode Weather { get; private set; }
     public double? TemperatureC { get; private set; }
@@ -82,6 +95,14 @@ internal sealed class WorldControl : Avalonia.Controls.Control
     {
         _row = row;
         _column = column;
+        InvalidateVisual();
+    }
+
+    public void ShowCatFrame(int row, int column, bool visible)
+    {
+        _catRow = row;
+        _catColumn = column;
+        _catVisible = visible;
         InvalidateVisual();
     }
 
@@ -138,12 +159,14 @@ internal sealed class WorldControl : Avalonia.Controls.Control
         if (isOpen)
         {
             PetX = 195;
+            CatX = 116;
             PetScale = 1;
             SetWorldGroundY(176);
         }
         else
         {
             PetX = 25;
+            CatX = 94;
             PetY = 20;
             PetScale = 1.55;
         }
@@ -167,6 +190,10 @@ internal sealed class WorldControl : Avalonia.Controls.Control
             PetBaseWidth * PetScale,
             PetBaseHeight * PetScale);
 
+    private Rect CatBounds => IsWorldOpen
+        ? new Rect(CatX, 181 - WorldCatHeight, WorldCatWidth, WorldCatHeight)
+        : new Rect(CatX, 136 - DesktopCatHeight, DesktopCatWidth, DesktopCatHeight);
+
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -175,6 +202,7 @@ internal sealed class WorldControl : Avalonia.Controls.Control
         {
             DrawMiniGround(context);
             DrawMiniWeather(context);
+            DrawCat(context);
             DrawPet(context);
             DrawUpdateProgress(context);
             return;
@@ -201,6 +229,7 @@ internal sealed class WorldControl : Avalonia.Controls.Control
             DrawMovingClouds(context);
             DrawWeather(context);
             DrawWorldWeatherIndicators(context);
+            DrawCat(context);
             DrawPet(context);
             DrawUpdateProgress(context);
         }
@@ -448,6 +477,31 @@ internal sealed class WorldControl : Avalonia.Controls.Control
             _lifeAtlas,
             source,
             PetBounds);
+    }
+
+    private void DrawCat(DrawingContext context)
+    {
+        if (!_catVisible)
+        {
+            return;
+        }
+
+        var rows = Math.Max(1, _catAtlas.PixelSize.Height / CellHeight);
+        var columns = Math.Max(1, _catAtlas.PixelSize.Width / CellWidth);
+        var row = Math.Clamp(_catRow, 0, rows - 1);
+        var column = ((_catColumn % columns) + columns) % columns;
+        var source = new Rect(
+            column * CellWidth,
+            row * CellHeight,
+            CellWidth,
+            CellHeight);
+
+        context.DrawEllipse(
+            Brush(36, 24, 29, 21), null,
+            new Point(CatBounds.Center.X, CatBounds.Bottom - 1),
+            IsWorldOpen ? 7 : 10,
+            IsWorldOpen ? 2 : 2.5);
+        context.DrawImage(_catAtlas, source, CatBounds);
     }
 
     private void DrawUpdateProgress(DrawingContext context)

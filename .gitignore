@@ -7,6 +7,8 @@ obj/
 *.zip
 *.dmg
 dist/
+dist-*/
+output/
 .idea/
 .vscode/
 __pycache__/
@@ -21,3 +23,6 @@ art/cute-actions/decoded/
 art/cute-actions/frames/
 art/cute-actions/qa-approved-frames.png
 art/cute-actions/sophie-life-16rows.png
+art/cat-action/runtime-*.png
+art/cat-action/references/
+art/cat-action/generated-contact-sheet.png

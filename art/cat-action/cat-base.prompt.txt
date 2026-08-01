@@ -1,0 +1,9 @@
+Create one clean horizontal four-pose pixel-art character sheet for the exact same real cat shown in input image 1. Input image 2 is Sophie and is style reference only; do not include Sophie in this sheet.
+
+Identity must stay faithful: round broad face, small rounded upright ears, large green eyes, plush short grey-golden shaded coat, warmer beige face and belly, cream muzzle/chest/lower legs/paws, stocky chunky body, and a very thick fluffy-looking tail. Keep the cat adult and compact, not a thin kitten.
+
+Match Sophie's established crisp retro 16-bit pixel-art rendering, dark selective outlines, compact readable forms, limited warm palette, nearest-neighbor pixel edges, and desktop-pet sprite scale. Each pose must be a complete full-body sprite at identical scale and baseline, with generous empty space and no overlap.
+
+Left to right: front-facing seated pose; side-view walking pose facing right; standing three-quarter pose with tail raised; curled sleeping pose with tail wrapped around the body.
+
+Use a perfectly flat solid #FF00FF magenta background. No text, labels, borders, scenery, floor, shadows, props, humans, extra animals, detached limbs, duplicate tails, or gradients in the background.

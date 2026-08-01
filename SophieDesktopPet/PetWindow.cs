@@ -43,6 +43,10 @@ internal sealed class PetWindow : Window
     private PetState? _pendingActivity;
     private int _pendingActivityTicks;
     private double _walkTargetX = double.NaN;
+    private CatState _catState = CatState.WalkingRight;
+    private int _catFrame;
+    private int _catFrameDelayTicks;
+    private int _catTicksRemaining = 60;
     private MenuItem? _worldToggleMenu;
     private MenuItem? _weatherStatusMenu;
     private MenuItem? _updateMenu;
@@ -232,6 +236,7 @@ internal sealed class PetWindow : Window
         var animation = LifeAnimations.For(displayState);
         _world.ShowFrame(animation.Row, _frame);
         _world.AdvanceEnvironment();
+        TickCatCompanion(displayState);
         _frameDelayTicks++;
         if (_frameDelayTicks >= FrameHoldTicks(displayState))
         {
@@ -339,6 +344,11 @@ internal sealed class PetWindow : Window
 
     private void ChooseNextIslandActivity()
     {
+        if (TryChooseCatInteraction(island: true))
+        {
+            return;
+        }
+
         if (TryChooseWeatherActivity(island: true))
         {
             return;
@@ -474,6 +484,11 @@ internal sealed class PetWindow : Window
 
     private void ChooseNextDesktopActivity()
     {
+        if (TryChooseCatInteraction(island: false))
+        {
+            return;
+        }
+
         if (TryChooseWeatherActivity(island: false))
         {
             return;
@@ -686,7 +701,7 @@ internal sealed class PetWindow : Window
         {
             BeginPositionedActivity(
                 PetState.ToiletBreak,
-                _random.Next(34, 51),
+                165,
                 island,
                 255);
             return true;
@@ -696,13 +711,105 @@ internal sealed class PetWindow : Window
         {
             BeginPositionedActivity(
                 PetState.UrgentBush,
-                _random.Next(28, 43),
+                145,
                 island,
                 210);
             return true;
         }
 
         return false;
+    }
+
+    private bool TryChooseCatInteraction(bool island)
+    {
+        if (_random.Next(100) >= 9)
+        {
+            return false;
+        }
+
+        BeginPositionedActivity(PetState.CatNuzzle, 42, island, 238);
+        return true;
+    }
+
+    private void TickCatCompanion(PetState displayState)
+    {
+        var visible =
+            _world.IsWorldOpen &&
+            !_showingUpdate &&
+            displayState != PetState.CatNuzzle;
+        var animation = CatAnimations.For(_catState);
+        _world.ShowCatFrame(animation.Row, _catFrame, visible);
+        if (!visible)
+        {
+            return;
+        }
+
+        _catFrameDelayTicks++;
+        if (_catFrameDelayTicks >= FrameHoldTickCount)
+        {
+            _catFrameDelayTicks = 0;
+            _catFrame = (_catFrame + 1) % animation.Frames;
+        }
+
+        if (_catState is CatState.WalkingRight or CatState.WalkingLeft)
+        {
+            const double minX = 82;
+            // Keep the companion in the island lane to Sophie's left. The
+            // four-pixel gap prevents opaque sprite bounds intersecting.
+            var maxX = Math.Max(minX, _world.PetX - 35);
+            var step = 0.75;
+            _world.CatX = Math.Clamp(_world.CatX, minX, maxX);
+            _world.CatX +=
+                _catState == CatState.WalkingRight ? step : -step;
+            if (_world.CatX <= minX)
+            {
+                _world.CatX = minX;
+                SetCatState(
+                    CatState.WalkingRight, _catTicksRemaining);
+            }
+            else if (_world.CatX >= maxX)
+            {
+                _world.CatX = maxX;
+                SetCatState(
+                    CatState.WalkingLeft, _catTicksRemaining);
+            }
+        }
+
+        _catTicksRemaining--;
+        if (_catTicksRemaining <= 0)
+        {
+            ChooseNextCatActivity();
+        }
+    }
+
+    private void ChooseNextCatActivity()
+    {
+        var roll = _random.Next(100);
+        if (roll < 24)
+        {
+            SetCatState(CatState.Sleeping, _random.Next(120, 241));
+            return;
+        }
+
+        if (roll < 58)
+        {
+            SetCatState(
+                _random.Next(2) == 0
+                    ? CatState.WalkingRight
+                    : CatState.WalkingLeft,
+                _random.Next(45, 91));
+            return;
+        }
+
+        SetCatState(CatState.Idle, _random.Next(80, 181));
+    }
+
+    private void SetCatState(CatState state, int ticks)
+    {
+        _catState = state;
+        _catFrame = 0;
+        _catFrameDelayTicks = 0;
+        _catTicksRemaining = Math.Max(1, ticks);
     }
 
     private void BeginPositionedActivity(

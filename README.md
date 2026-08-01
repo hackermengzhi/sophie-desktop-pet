@@ -15,14 +15,18 @@
 ## Highlights
 
 - Transparent, frameless, always-on-top macOS desktop pet.
-- Nineteen four-frame pixel animations: idle, walking
+- Twenty four-frame Sophie animations: idle, walking
   right, walking left, sitting, eating, sleeping, gardening, reading, rain
   umbrella, snowman building, a cozy winter coat, cooling down, backpack outings, and
   joyful jumps, an affectionate expression, update-robot repair, a toilet-paper
   break, a blushing urgent search for a private bush, and singing into a tiny
-  golden microphone.
+  golden microphone, and kneeling to pet her cat. Compact mode only shows the
+  cat during that combined interaction; in the open world it becomes an
+  independent companion that blinks, walks, and curls up to sleep.
 - Every frame is held for 500 ms. A guaranteed activity cycle follows 20
   seconds of idle time with one random non-idle action.
+  The final toilet frame remains visible for about 15 seconds, and the private
+  bush finale for about 13 seconds.
 - Approximate automatic location via [ipwho.is](https://ipwho.is/) and current
   conditions from [Open-Meteo](https://open-meteo.com/).
 - Weather refreshes every 15 minutes and retries after 2 minutes on failure.
