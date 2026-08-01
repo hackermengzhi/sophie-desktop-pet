@@ -14,43 +14,54 @@ internal sealed class MacUpdateInstaller
         set -u
 
         pid="$1"
-        current="$2"
+        target="$2"
         ready="$3"
-        backup="${current}.sophie-update-backup"
+        backup="${target}.sophie-update-backup"
         helper="$0"
 
         trap '/bin/rm -f -- "$helper"' EXIT
 
         [[ "$pid" == <-> ]] || exit 20
-        [[ "$current" == /*/Sophie\ Desktop\ Pet.app ]] || exit 21
-        [[ "$ready" == "$current".sophie-update-ready-* ]] || exit 22
-        [[ -d "$current" && -d "$ready" ]] || exit 23
+        [[ "$target" == /*/Sophie\ Desktop\ Pet.app ]] || exit 21
+        [[ "$ready" == "$target".sophie-update-ready-* ]] || exit 22
+        [[ -d "$ready" ]] || exit 23
         [[ ! -e "$backup" ]] || exit 24
 
+        remaining=300
         while /bin/kill -0 "$pid" 2>/dev/null; do
+            (( remaining-- > 0 )) || exit 25
             /bin/sleep 0.2
         done
 
-        if ! /bin/mv -- "$current" "$backup"; then
-            /usr/bin/open "$current"
-            exit 30
+        had_previous=0
+        if [[ -e "$target" ]]; then
+            if ! /bin/mv -- "$target" "$backup"; then
+                /usr/bin/open "$target"
+                exit 30
+            fi
+            had_previous=1
         fi
 
-        if ! /bin/mv -- "$ready" "$current"; then
-            /bin/mv -- "$backup" "$current"
-            /usr/bin/open "$current"
+        if ! /bin/mv -- "$ready" "$target"; then
+            if (( had_previous )); then
+                /bin/mv -- "$backup" "$target"
+                /usr/bin/open "$target"
+            fi
             exit 31
         fi
 
-        if ! /usr/bin/open "$current"; then
-            failed="${ready}.failed"
-            /bin/mv -- "$current" "$failed"
-            /bin/mv -- "$backup" "$current"
-            /usr/bin/open "$current"
+        if ! /usr/bin/open "$target"; then
+            /bin/rm -rf -- "$target"
+            if (( had_previous )); then
+                /bin/mv -- "$backup" "$target"
+                /usr/bin/open "$target"
+            fi
             exit 32
         fi
 
-        /bin/rm -rf -- "$backup"
+        if (( had_previous )); then
+            /bin/rm -rf -- "$backup"
+        fi
         exit 0
         """;
 
@@ -59,9 +70,20 @@ internal sealed class MacUpdateInstaller
         CancellationToken cancellationToken)
     {
         var currentBundle = FindCurrentBundle();
-        var currentParent = Directory.GetParent(currentBundle)?.FullName ??
+        var targetBundle = ResolveInstallTarget(currentBundle);
+        var targetParent = Directory.GetParent(targetBundle)?.FullName ??
             throw new InvalidOperationException("无法找到应用所在文件夹。");
-        EnsureWritable(currentParent);
+        Directory.CreateDirectory(targetParent);
+        EnsureWritable(targetParent);
+        if (!string.Equals(
+                targetBundle,
+                currentBundle,
+                StringComparison.Ordinal) &&
+            (Directory.Exists(targetBundle) || File.Exists(targetBundle)))
+        {
+            throw new InvalidOperationException(
+                "用户 Applications 中已经有 Sophie，请从那个版本启动更新。");
+        }
 
         var cacheRoot = GetCacheRoot();
         Directory.CreateDirectory(cacheRoot);
@@ -89,11 +111,12 @@ internal sealed class MacUpdateInstaller
                 throw new InvalidDataException(
                     $"更新包中的应用数量不正确：{bundles.Length}。");
             }
-            await ValidateBundleAsync(bundles[0], cancellationToken);
+            await ValidateBundleAsync(
+                bundles[0], update.Version, cancellationToken);
 
             readyBundle =
-                currentBundle + $".sophie-update-ready-{Guid.NewGuid():N}";
-            var backupBundle = currentBundle + ".sophie-update-backup";
+                targetBundle + $".sophie-update-ready-{Guid.NewGuid():N}";
+            var backupBundle = targetBundle + ".sophie-update-backup";
             if (Directory.Exists(readyBundle) ||
                 File.Exists(readyBundle) ||
                 Directory.Exists(backupBundle) ||
@@ -106,7 +129,8 @@ internal sealed class MacUpdateInstaller
                 "/usr/bin/ditto",
                 ["--", bundles[0], readyBundle],
                 cancellationToken);
-            await ValidateBundleAsync(readyBundle, cancellationToken);
+            await ValidateBundleAsync(
+                readyBundle, update.Version, cancellationToken);
 
             var helperPath = Path.Combine(
                 cacheRoot,
@@ -125,7 +149,7 @@ internal sealed class MacUpdateInstaller
             startInfo.ArgumentList.Add(helperPath);
             startInfo.ArgumentList.Add(
                 Environment.ProcessId.ToString(CultureInfo.InvariantCulture));
-            startInfo.ArgumentList.Add(currentBundle);
+            startInfo.ArgumentList.Add(targetBundle);
             startInfo.ArgumentList.Add(readyBundle);
 
             _ = Process.Start(startInfo) ??
@@ -139,6 +163,45 @@ internal sealed class MacUpdateInstaller
             {
                 TryDeleteDirectory(readyBundle);
             }
+        }
+    }
+
+    private static string ResolveInstallTarget(string currentBundle)
+    {
+        var parent = Directory.GetParent(currentBundle)?.FullName ??
+            throw new InvalidOperationException("无法找到应用所在文件夹。");
+        if (!IsAppTranslocated(currentBundle) && CanWriteDirectory(parent))
+        {
+            return currentBundle;
+        }
+
+        var userApplications = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            "Applications");
+        Directory.CreateDirectory(userApplications);
+        EnsureWritable(userApplications);
+        return Path.Combine(userApplications, BundleName);
+    }
+
+    private static bool IsAppTranslocated(string bundle) =>
+        bundle.Contains(
+            "/AppTranslocation/",
+            StringComparison.Ordinal);
+
+    private static bool CanWriteDirectory(string directory)
+    {
+        try
+        {
+            EnsureWritable(directory);
+            return true;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
         }
     }
 
@@ -250,6 +313,7 @@ internal sealed class MacUpdateInstaller
 
     private static async Task ValidateBundleAsync(
         string bundle,
+        Version? expectedVersion,
         CancellationToken cancellationToken)
     {
         if (!OperatingSystem.IsMacOS())
@@ -291,6 +355,48 @@ internal sealed class MacUpdateInstaller
                 StringComparison.Ordinal))
         {
             throw new InvalidDataException("更新应用的可执行文件名不正确。");
+        }
+
+        var bundleIdentifier = (
+            await RunProcessAsync(
+                "/usr/bin/plutil",
+                [
+                    "-extract",
+                    "CFBundleIdentifier",
+                    "raw",
+                    "-o",
+                    "-",
+                    infoPlist
+                ],
+                cancellationToken)).Trim();
+        if (!string.Equals(
+                bundleIdentifier,
+                "io.github.hackermengzhi.sophie-desktop-pet",
+                StringComparison.Ordinal))
+        {
+            throw new InvalidDataException("更新应用的标识不正确。");
+        }
+
+        if (expectedVersion is not null)
+        {
+            var bundleVersion = (
+                await RunProcessAsync(
+                    "/usr/bin/plutil",
+                    [
+                        "-extract",
+                        "CFBundleShortVersionString",
+                        "raw",
+                        "-o",
+                        "-",
+                        infoPlist
+                    ],
+                    cancellationToken)).Trim();
+            if (!Version.TryParse(bundleVersion, out var parsedVersion) ||
+                parsedVersion != expectedVersion)
+            {
+                throw new InvalidDataException(
+                    $"更新应用版本不正确：{bundleVersion}。");
+            }
         }
 
         await RunProcessAsync(

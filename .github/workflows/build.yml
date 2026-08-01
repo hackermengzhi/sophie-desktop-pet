@@ -45,11 +45,10 @@ jobs:
             "$version" \
             dist
 
-      - name: Upload packaged app
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: Sophie-Desktop-Pet-package-macOS-arm64
-          path: |
-            dist/Sophie-Desktop-Pet-macOS-arm64.zip
-            dist/Sophie-Desktop-Pet-macOS-arm64.zip.sha256
-          if-no-files-found: error
+      - name: Explain user downloads
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          This workflow only builds and verifies the package. GitHub Actions
+          wraps every downloadable artifact in another ZIP, so user-facing
+          packages are published only on the repository Releases page.
+          EOF

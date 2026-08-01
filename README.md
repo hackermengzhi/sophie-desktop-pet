@@ -67,7 +67,9 @@ Life actions are intentionally automatic and are not exposed as menu commands.
 The updater accepts exactly one release asset named
 `Sophie-Desktop-Pet-macOS-arm64.zip`. Before installation it verifies the
 asset size, GitHub-provided SHA-256 digest, app structure, and code signature.
-The previous app is restored if replacement fails.
+The previous app is restored if replacement fails. If macOS launched Sophie
+through App Translocation, or the current folder is not writable, the verified
+update is installed in `~/Applications` and relaunched from there.
 
 The updater reads this public repository anonymously. It does not request,
 store, embed, or log GitHub credentials.
@@ -94,11 +96,12 @@ dotnet publish SophieDesktopPet/SophieDesktopPet.csproj \
   -p:PublishSingleFile=true
 ```
 
-The GitHub Actions workflow runs the same Release build and uploads its publish
-directory as an artifact.
+The Build workflow verifies the same package but intentionally does not expose
+it as an Actions artifact: GitHub would wrap the release ZIP in another ZIP.
+User downloads are the direct assets on the repository Releases page.
 
 For a production release, update `Version` in the project and push the matching
-tag, such as `v1.3.0`. `release.yml` builds, signs, verifies, retains the Actions
+tag, such as `v1.4.1`. `release.yml` builds, signs, verifies, retains the Actions
 artifact, and creates the GitHub Release with the ZIP and SHA-256 file.
 
 ## Project layout

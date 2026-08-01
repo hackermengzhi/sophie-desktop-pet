@@ -57,7 +57,9 @@
 
 更新器只接受名称为 `Sophie-Desktop-Pet-macOS-arm64.zip` 的唯一正式版
 附件，并在安装前验证附件大小、GitHub 提供的 SHA-256 摘要、App 结构和
-代码签名。安装失败时会恢复旧版本。
+代码签名。安装失败时会恢复旧版本。如果 macOS 通过 App Translocation
+隔离路径运行 Sophie，或当前目录不可写，验证过的新版本会自动安装到
+`~/Applications` 并从那里重新启动。
 
 更新器匿名读取这个公开仓库，不会请求、保存、嵌入或记录 GitHub 凭据。
 
@@ -80,8 +82,12 @@ dotnet publish SophieDesktopPet/SophieDesktopPet.csproj \
   -p:PublishSingleFile=true
 ```
 
+普通 Build 工作流只验证安装包，不再提供容易混淆的 Actions artifact；
+GitHub 会给 artifact 强制再套一层 ZIP。给用户下载的成品只放在仓库的
+Releases 页面，下载后解压一次就是 App。
+
 创建正式版时，先同步 `SophieDesktopPet.csproj` 中的 `Version`，再推送
-同版本标签，例如 `v1.3.0`。`release.yml` 会自动构建、签名、验证、
+同版本标签，例如 `v1.4.1`。`release.yml` 会自动构建、签名、验证、
 保存 Actions artifact，并创建带 ZIP 和 SHA-256 文件的 GitHub Release。
 
 ## 隐私
