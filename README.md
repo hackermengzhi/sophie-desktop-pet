@@ -15,9 +15,10 @@
 ## Highlights
 
 - Transparent, frameless, always-on-top macOS desktop pet.
-- Twelve independently generated four-frame life animations: idle, walking
+- Fifteen independently generated four-frame life animations: idle, walking
   right, walking left, sitting, eating, sleeping, gardening, reading, rain
-  umbrella, snowman building, shivering, and cooling down.
+  umbrella, snowman building, shivering, cooling down, backpack outings, and
+  joyful jumps, and an affectionate expression.
 - Every frame is held for 500 ms. A guaranteed activity cycle follows 20
   seconds of idle time with one random non-idle action.
 - Approximate automatic location via [ipwho.is](https://ipwho.is/) and current
@@ -34,6 +35,9 @@
   across the entire desktop.
 - Double-click Sophie to open or close a larger island world.
 - Day/night scenes, drifting clouds, fireflies, pixel rain, and pixel snow.
+- Clear daytime can also send Sophie on a tiny backpack outing, give her a
+  spontaneous joyful jump, or show a sweet affectionate expression. These are
+  automatic life moments, not menu actions.
 - Checks the latest GitHub release at launch and hourly. A newer signed package
   is downloaded and SHA-256 verified, but installed only after a menu click.
 - Self-contained Apple Silicon build; no separate .NET installation required.

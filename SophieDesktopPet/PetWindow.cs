@@ -320,6 +320,11 @@ internal sealed class PetWindow : Window
             return;
         }
 
+        if (TryChooseCuteActivity(island: true))
+        {
+            return;
+        }
+
         var roll = _random.Next(100);
         if (_world.IsNight)
         {
@@ -445,6 +450,11 @@ internal sealed class PetWindow : Window
             return;
         }
 
+        if (TryChooseCuteActivity(island: false))
+        {
+            return;
+        }
+
         var roll = _random.Next(100);
         if (_world.IsNight)
         {
@@ -536,7 +546,7 @@ internal sealed class PetWindow : Window
         {
             if (_random.Next(100) < 28)
             {
-                BeginWeatherActivity(
+                BeginPositionedActivity(
                     PetState.Snowman, _random.Next(55, 86), island, 230);
                 return true;
             }
@@ -548,7 +558,7 @@ internal sealed class PetWindow : Window
         {
             if (_random.Next(100) < 35)
             {
-                BeginWeatherActivity(
+                BeginPositionedActivity(
                     PetState.RainUmbrella, _random.Next(50, 91), island, 195);
                 return true;
             }
@@ -559,14 +569,14 @@ internal sealed class PetWindow : Window
         var temperature = _world.TemperatureC;
         if (temperature is <= 5 && _random.Next(100) < 35)
         {
-            BeginWeatherActivity(
+            BeginPositionedActivity(
                 PetState.Shiver, _random.Next(35, 66), island, 195);
             return true;
         }
 
         if (temperature is > 27 && _random.Next(100) < 35)
         {
-            BeginWeatherActivity(
+            BeginPositionedActivity(
                 PetState.Sweat, _random.Next(35, 66), island, 195);
             return true;
         }
@@ -574,7 +584,54 @@ internal sealed class PetWindow : Window
         return false;
     }
 
-    private void BeginWeatherActivity(
+    private bool TryChooseCuteActivity(bool island)
+    {
+        if (!_world.IsNight && _world.Weather == WeatherMode.Clear)
+        {
+            var daytimeRoll = _random.Next(100);
+            if (daytimeRoll < 7)
+            {
+                BeginPositionedActivity(
+                    PetState.BackpackOuting, _random.Next(32, 51), island, 286);
+                return true;
+            }
+
+            if (daytimeRoll < 12)
+            {
+                BeginPositionedActivity(
+                    PetState.Affectionate, _random.Next(44, 71), island, 205);
+                return true;
+            }
+
+            if (daytimeRoll < 17)
+            {
+                BeginPositionedActivity(
+                    PetState.JoyJump, _random.Next(24, 37), island, 270);
+                return true;
+            }
+
+            return false;
+        }
+
+        var quietRoll = _random.Next(100);
+        if (quietRoll < 7)
+        {
+            BeginPositionedActivity(
+                PetState.Affectionate, _random.Next(44, 71), island, 205);
+            return true;
+        }
+
+        if (quietRoll < 9)
+        {
+            BeginPositionedActivity(
+                PetState.JoyJump, _random.Next(24, 37), island, 270);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void BeginPositionedActivity(
         PetState activity,
         int ticks,
         bool island,

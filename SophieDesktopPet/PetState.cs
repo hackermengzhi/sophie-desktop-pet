@@ -19,7 +19,10 @@ internal enum PetState
     RainUmbrella,
     Snowman,
     Shiver,
-    Sweat
+    Sweat,
+    BackpackOuting,
+    Affectionate,
+    JoyJump
 }
 
 internal static class LifeAnimations
@@ -38,6 +41,9 @@ internal static class LifeAnimations
         PetState.Snowman => new(9, 4, false),
         PetState.Shiver => new(10, 4, true),
         PetState.Sweat => new(11, 4, true),
+        PetState.BackpackOuting => new(12, 4, false),
+        PetState.Affectionate => new(14, 4, true),
+        PetState.JoyJump => new(15, 4, false),
         PetState.Working => new(7, 4, true),
         PetState.Reviewing => new(7, 4, true),
         _ => new(0, 4, true)
