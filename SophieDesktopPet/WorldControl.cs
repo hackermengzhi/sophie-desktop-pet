@@ -42,7 +42,7 @@ internal sealed class WorldControl : Avalonia.Controls.Control
     public WorldControl()
     {
         using var lifeStream = AssetLoader.Open(
-            new Uri("avares://SophieDesktopPet/Assets/sophie-life.png"));
+            new Uri("avares://SophieDesktopPet/Assets/sophie-life-winter.png"));
         _lifeAtlas = new Bitmap(lifeStream);
 
         using var catStream = AssetLoader.Open(
